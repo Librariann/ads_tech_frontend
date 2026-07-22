@@ -1,4 +1,15 @@
 import { Bell } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+import { LogoutButton } from "@/components/auth/logout-button";
+import {
+  ACCESS_TOKEN_COOKIE,
+  AuthBackendUnavailableError,
+  type AuthUser,
+  REFRESH_TOKEN_COOKIE,
+  fetchAuthUser,
+} from "@/lib/auth/server";
 
 const navigation = [
   "대시보드",
@@ -57,7 +68,11 @@ const campaigns = [
   },
 ] as const;
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser();
+  const userLabel = user.displayName || user.email;
+  const userInitial = userLabel.trim().charAt(0).toUpperCase();
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-700 lg:flex">
       <aside className="bg-slate-900 px-4 py-5 text-white lg:fixed lg:inset-y-0 lg:w-[260px] lg:px-6 lg:py-8">
@@ -112,11 +127,21 @@ export default function Home() {
             </button>
             <div
               aria-hidden="true"
-              className="size-[38px] rounded-full bg-slate-300"
-            />
-            <span className="hidden text-sm font-medium text-slate-700 sm:inline">
-              Admin
-            </span>
+              className="flex size-[38px] items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700"
+            >
+              {userInitial}
+            </div>
+            <div className="hidden min-w-0 sm:block">
+              <p className="max-w-40 truncate text-sm font-medium text-slate-700">
+                {userLabel}
+              </p>
+              {user.displayName ? (
+                <p className="max-w-40 truncate text-xs text-slate-400">
+                  {user.email}
+                </p>
+              ) : null}
+            </div>
+            <LogoutButton />
           </div>
         </header>
 
@@ -230,5 +255,41 @@ export default function Home() {
         </section>
       </main>
     </div>
+  );
+}
+
+async function getCurrentUser(): Promise<AuthUser> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE)?.value;
+  const refreshToken = cookieStore.get(REFRESH_TOKEN_COOKIE)?.value;
+
+  if (!accessToken) {
+    redirect(
+      refreshToken ? "/api/auth/session?returnTo=/" : "/login",
+    );
+  }
+
+  let response: Response;
+  try {
+    response = await fetchAuthUser(accessToken);
+  } catch (error) {
+    if (error instanceof AuthBackendUnavailableError) {
+      redirect("/login?error=backend");
+    }
+    throw error;
+  }
+
+  if (response.ok) {
+    return (await response.json()) as AuthUser;
+  }
+
+  if (response.status === 401 && refreshToken) {
+    redirect("/api/auth/session?returnTo=/");
+  }
+
+  redirect(
+    response.status === 401
+      ? "/login?error=session"
+      : "/login?error=backend",
   );
 }
