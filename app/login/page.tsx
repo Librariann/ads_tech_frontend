@@ -79,9 +79,9 @@ export default async function LoginPage({
         />
       </aside>
 
-      {/* <section className="flex items-center justify-center px-5 py-12 sm:px-10 lg:px-16">
+      <section className="flex items-center justify-center px-5 py-12 sm:px-10 lg:px-16">
         <LoginForm initialError={error ? errorMessages[error] : undefined} />
-      </section> */}
+      </section>
     </main>
   );
 }
