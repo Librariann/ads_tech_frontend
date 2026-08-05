@@ -4,13 +4,11 @@ import { redirect } from "next/navigation";
 import { BarChart3, ShieldCheck, Zap } from "lucide-react";
 
 import { LoginForm } from "@/components/auth/login-form";
-import {
-  ACCESS_TOKEN_COOKIE,
-  REFRESH_TOKEN_COOKIE,
-} from "@/lib/auth/server";
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "@/lib/auth/server";
 
 const errorMessages: Record<string, string> = {
   backend: "인증 서버에 연결할 수 없습니다. 서버 상태를 확인해 주세요.",
+  oauth: "소셜 로그인을 완료하지 못했습니다. 다시 시도해 주세요.",
   provider: "지원하지 않는 로그인 방식입니다.",
   session: "로그인 세션이 만료되었습니다. 다시 로그인해 주세요.",
 };
@@ -81,9 +79,9 @@ export default async function LoginPage({
         />
       </aside>
 
-      <section className="flex items-center justify-center px-5 py-12 sm:px-10 lg:px-16">
+      {/* <section className="flex items-center justify-center px-5 py-12 sm:px-10 lg:px-16">
         <LoginForm initialError={error ? errorMessages[error] : undefined} />
-      </section>
+      </section> */}
     </main>
   );
 }
