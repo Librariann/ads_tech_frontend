@@ -43,10 +43,7 @@ const providers = [
     id: "google",
     label: "Google로 계속하기",
     icon: (
-      <span
-        aria-hidden="true"
-        className="text-lg font-bold text-[#4285f4]"
-      >
+      <span aria-hidden="true" className="text-lg font-bold text-[#4285f4]">
         G
       </span>
     ),
@@ -94,7 +91,9 @@ export function LoginForm({ initialError }: LoginFormProps) {
   return (
     <div className="w-full max-w-[420px]">
       <div className="mb-9">
-        <p className="mb-3 text-sm font-semibold text-indigo-600">WELCOME BACK</p>
+        <p className="mb-3 text-sm font-semibold text-indigo-600">
+          WELCOME BACK
+        </p>
         <h1 className="text-3xl font-bold text-slate-900">로그인</h1>
         <p className="mt-3 text-sm leading-6 text-slate-500">
           광고 운영 계정으로 워크스페이스에 접속하세요.
@@ -110,7 +109,7 @@ export function LoginForm({ initialError }: LoginFormProps) {
               provider.id === "naver"
                 ? "border-[#03c75a] bg-[#03c75a] text-white hover:bg-[#02b351]"
                 : provider.id === "kakao"
-                  ? "border-[#fee500] bg-[#fee500] text-[#3c1e1e] hover:bg-[#f5dc00]"
+                  ? "border-[#181712] bg-[#fee500] text-[#3c1e1e] hover:bg-[#f5dc00]"
                   : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
             }`}
           >

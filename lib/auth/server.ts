@@ -71,10 +71,7 @@ export function fetchAuthUser(accessToken: string) {
   });
 }
 
-export function setAuthCookies(
-  response: NextResponse,
-  tokens: AuthTokens,
-) {
+export function setAuthCookies(response: NextResponse, tokens: AuthTokens) {
   const secure = process.env.NODE_ENV === "production";
 
   response.cookies.set(ACCESS_TOKEN_COOKIE, tokens.accessToken, {
