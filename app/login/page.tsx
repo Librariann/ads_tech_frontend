@@ -25,7 +25,7 @@ export default async function LoginPage({
   const { error } = await searchParams;
   const cookieStore = await cookies();
   if (
-    error !== "backend" &&
+    !error &&
     (cookieStore.has(ACCESS_TOKEN_COOKIE) ||
       cookieStore.has(REFRESH_TOKEN_COOKIE))
   ) {
