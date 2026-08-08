@@ -21,7 +21,5 @@ async function handleOAuthRedirect(
     return NextResponse.redirect(new URL("/login?error=provider", request.url));
   }
 
-  return NextResponse.redirect(
-    `${getAuthApiUrl()}/auth/oauth/${provider}`,
-  );
+  return NextResponse.redirect(`${getAuthApiUrl()}/auth/oauth/${provider}`);
 }
