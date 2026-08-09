@@ -5,6 +5,7 @@ import {
   AuthBackendUnavailableError,
   REFRESH_TOKEN_COOKIE,
   clearAuthCookies,
+  fetchAuthUser,
   refreshAuthTokens,
   setAuthCookies,
 } from "@/lib/auth/server";
@@ -23,6 +24,20 @@ export async function GET(request: Request) {
     const tokens = await refreshAuthTokens(refreshToken);
     if (!tokens) {
       const response = NextResponse.redirect(loginUrl);
+      clearAuthCookies(response);
+      return response;
+    }
+
+    const userResponse = await fetchAuthUser(tokens.accessToken);
+    if (!userResponse.ok) {
+      const response = NextResponse.redirect(
+        new URL(
+          userResponse.status === 401
+            ? "/login?error=session"
+            : "/login?error=backend",
+          request.url,
+        ),
+      );
       clearAuthCookies(response);
       return response;
     }
