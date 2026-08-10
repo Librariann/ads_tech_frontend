@@ -167,7 +167,7 @@ export default async function HomePage() {
                 모든 광고가 정상적으로 운영 중이에요
               </div>
               <h1 className="text-[clamp(2rem,4.6vw,3.45rem)] font-black leading-[1.14] tracking-[-0.045em] text-[#18212f]">
-                {greetingName}, 오늘도 광고가
+                {greetingName}님 오늘도 광고가
                 <br className="hidden sm:block" /> 잘 일하고 있어요.
               </h1>
               <p className="mt-5 max-w-xl text-[1.02rem] leading-7 text-[#68717e]">
