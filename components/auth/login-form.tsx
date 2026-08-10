@@ -119,7 +119,7 @@ export function LoginForm({ initialError }: LoginFormProps) {
         ))}
       </div>
 
-      <div className="my-7 flex items-center gap-4" aria-hidden="true">
+      {/* <div className="my-7 flex items-center gap-4" aria-hidden="true">
         <div className="h-px flex-1 bg-slate-200" />
         <span className="text-xs font-medium text-slate-400">또는 이메일</span>
         <div className="h-px flex-1 bg-slate-200" />
@@ -208,7 +208,7 @@ export function LoginForm({ initialError }: LoginFormProps) {
           )}
           {isSubmitting ? "로그인 중" : "이메일로 로그인"}
         </button>
-      </form>
+      </form> */}
     </div>
   );
 }

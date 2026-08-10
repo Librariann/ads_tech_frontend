@@ -10,6 +10,7 @@ import {
   Megaphone,
   Plus,
   Sparkles,
+  Settings2,
   Store,
   Target,
   WalletCards,
@@ -31,6 +32,12 @@ const navigation = [
   { label: "내 광고", icon: Megaphone, href: "#campaigns", current: false },
   { label: "성과 보기", icon: BarChart3, href: "#performance", current: false },
   { label: "주간 리포트", icon: FileText, href: "#report", current: false },
+  {
+    label: "설정",
+    icon: Settings2,
+    href: "/workspaces",
+    current: false,
+  },
 ] as const;
 
 const dailyResults = [42, 58, 46, 72, 64, 86, 76] as const;
@@ -414,7 +421,7 @@ export default async function HomePage() {
 
       <nav
         aria-label="모바일 주요 메뉴"
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-[#e7ded5] bg-[#fffdf9]/95 px-2 pb-[max(0.45rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#e7ded5] bg-[#fffdf9]/95 px-2 pb-[max(0.45rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md lg:hidden"
       >
         {navigation.map(({ label, icon: Icon, href, current }) => (
           <a
