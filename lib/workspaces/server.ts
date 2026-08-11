@@ -9,10 +9,21 @@ import {
   REFRESH_TOKEN_COOKIE,
   authBackendFetch,
 } from "@/lib/auth/server";
-import type { Workspace, WorkspaceMember } from "@/lib/workspaces/types";
+import type {
+  Workspace,
+  WorkspaceInvitation,
+  WorkspaceMember,
+} from "@/lib/workspaces/types";
 
 export function getWorkspaces(returnTo = "/workspaces") {
   return fetchWorkspaceJson<Workspace[]>("/workspaces", returnTo);
+}
+
+export function getWorkspaceInvitations(returnTo = "/invitations") {
+  return fetchWorkspaceJson<WorkspaceInvitation[]>(
+    "/workspaces/invitations",
+    returnTo,
+  );
 }
 
 export async function getWorkspace(workspaceId: string, returnTo: string) {

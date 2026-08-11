@@ -16,6 +16,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LogoutButton } from "@/components/auth/logout-button";
@@ -26,6 +27,7 @@ import {
   REFRESH_TOKEN_COOKIE,
   fetchAuthUser,
 } from "@/lib/auth/server";
+import { getWorkspaceInvitations } from "@/lib/workspaces/server";
 
 const navigation = [
   { label: "홈", icon: Home, href: "#top", current: true },
@@ -67,7 +69,10 @@ const campaigns = [
 ] as const;
 
 export default async function HomePage() {
-  const user = await getCurrentUser();
+  const [user, invitations] = await Promise.all([
+    getCurrentUser(),
+    getWorkspaceInvitations("/"),
+  ]);
   const userLabel = user.displayName || user.email || "TEST_USER";
   const greetingName = user.displayName?.trim() || "TEST_USER";
   const userInitial = userLabel.trim().charAt(0).toUpperCase();
@@ -141,14 +146,19 @@ export default async function HomePage() {
               마지막 업데이트: 오늘 오전 10:24
             </p>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
+              <Link
+                href="/invitations"
                 aria-label="알림 보기"
+                title="알림"
                 className="relative flex size-10 items-center justify-center rounded-full text-[#596372] transition-colors hover:bg-[#f0ebe5] hover:text-[#18212f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a]"
               >
                 <Bell aria-hidden="true" className="size-5" />
-                <span className="absolute right-2.5 top-2.5 size-2 rounded-full border-2 border-[#faf8f5] bg-[#f26b3a]" />
-              </button>
+                {invitations.length ? (
+                  <span className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-[#f26b3a] text-[0.58rem] font-black text-[#fff8f2] ring-2 ring-[#faf8f5]">
+                    {Math.min(invitations.length, 9)}
+                  </span>
+                ) : null}
+              </Link>
               <div
                 aria-hidden="true"
                 className="flex size-9 items-center justify-center rounded-full bg-[#18212f] text-sm font-bold text-[#fffaf4] lg:hidden"

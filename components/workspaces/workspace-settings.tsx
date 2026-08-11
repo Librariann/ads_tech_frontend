@@ -10,7 +10,9 @@ import {
   Home,
   LoaderCircle,
   LockKeyhole,
+  MailPlus,
   Save,
+  Send,
   Settings2,
   ShieldCheck,
   Users,
@@ -71,6 +73,14 @@ export function WorkspaceSettings({
     timezone: initialWorkspace.timezone,
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] =
+    useState<Exclude<WorkspaceRole, "owner">>("marketer");
+  const [isInviting, setIsInviting] = useState(false);
+  const [inviteMessage, setInviteMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  }>();
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -134,6 +144,60 @@ export function WorkspaceSettings({
       });
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function handleInvite(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canEdit || !inviteEmail.trim()) return;
+
+    setIsInviting(true);
+    setInviteMessage(undefined);
+
+    try {
+      const response = await fetch(
+        `/api/workspaces/${workspace.id}/invitations`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: inviteEmail.trim(),
+            role: inviteRole,
+          }),
+        },
+      );
+      const payload = (await response.json().catch(() => null)) as {
+        code?: string;
+        message?: string | string[];
+      } | null;
+
+      if (response.status === 401) {
+        window.location.href = `/api/auth/session?returnTo=${encodeURIComponent(
+          window.location.pathname,
+        )}`;
+        return;
+      }
+      if (!response.ok) {
+        setInviteMessage({
+          type: "error",
+          text: getInviteError(response.status, payload),
+        });
+        return;
+      }
+
+      setInviteEmail("");
+      setInviteMessage({
+        type: "success",
+        text: "워크스페이스 알림으로 초대를 보냈습니다.",
+      });
+      router.refresh();
+    } catch {
+      setInviteMessage({
+        type: "error",
+        text: "네트워크 연결을 확인한 뒤 다시 시도해 주세요.",
+      });
+    } finally {
+      setIsInviting(false);
     }
   }
 
@@ -375,7 +439,97 @@ export function WorkspaceSettings({
                     </span>
                   </div>
 
-                  <div className="mt-7 overflow-hidden rounded-xl border border-[#e1d9d1] bg-[#fffdf9]">
+                  <form
+                    onSubmit={handleInvite}
+                    className="mt-7 border-y border-[#e1d9d1] py-5"
+                  >
+                    <div className="flex items-center gap-2 text-sm font-extrabold">
+                      <MailPlus
+                        aria-hidden="true"
+                        className="size-4 text-[#c04b24]"
+                      />
+                      새 멤버 초대
+                    </div>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px_auto]">
+                      <div>
+                        <label htmlFor="invite-email" className="sr-only">
+                          초대할 이메일
+                        </label>
+                        <input
+                          id="invite-email"
+                          type="email"
+                          value={inviteEmail}
+                          onChange={(event) =>
+                            setInviteEmail(event.target.value)
+                          }
+                          placeholder="가입된 사용자의 이메일"
+                          required
+                          autoComplete="email"
+                          className="h-11 w-full rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3.5 text-sm font-semibold outline-none transition placeholder:font-normal placeholder:text-[#aaa29a] focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12"
+                        />
+                      </div>
+                      <div className="relative">
+                        <label htmlFor="invite-role" className="sr-only">
+                          초대 권한
+                        </label>
+                        <select
+                          id="invite-role"
+                          value={inviteRole}
+                          onChange={(event) =>
+                            setInviteRole(
+                              event.target.value as Exclude<
+                                WorkspaceRole,
+                                "owner"
+                              >,
+                            )
+                          }
+                          className="h-11 w-full appearance-none rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3.5 pr-9 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12"
+                        >
+                          <option value="admin">관리자</option>
+                          <option value="marketer">마케터</option>
+                          <option value="viewer">조회자</option>
+                        </select>
+                        <ChevronDown
+                          aria-hidden="true"
+                          className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#79726b]"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isInviting || !inviteEmail.trim()}
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#18212f] px-4 text-sm font-bold text-[#fff8f2] transition-colors hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a] disabled:cursor-not-allowed disabled:bg-[#d7d0c8] disabled:text-[#8d857d]"
+                      >
+                        {isInviting ? (
+                          <LoaderCircle
+                            aria-hidden="true"
+                            className="size-4 animate-spin"
+                          />
+                        ) : (
+                          <Send aria-hidden="true" className="size-4" />
+                        )}
+                        {isInviting ? "보내는 중" : "초대"}
+                      </button>
+                    </div>
+                    <p className="mt-2 text-xs leading-5 text-[#89827b]">
+                      현재는 GrowdoAds에 가입된 사용자에게 알림으로 전달됩니다.
+                    </p>
+                    {inviteMessage ? (
+                      <p
+                        role={
+                          inviteMessage.type === "error" ? "alert" : "status"
+                        }
+                        className={`mt-3 text-sm font-semibold ${
+                          inviteMessage.type === "success"
+                            ? "text-[#176a4b]"
+                            : "text-[#a13d21]"
+                        }`}
+                      >
+                        {inviteMessage.text}
+                      </p>
+                    ) : null}
+                  </form>
+
+                  <div className="mt-6 overflow-hidden rounded-xl border border-[#e1d9d1] bg-[#fffdf9]">
                     {members.map((member, index) => (
                       <div
                         key={member.id}
@@ -605,4 +759,23 @@ function getMemberStatusStyle(status: WorkspaceMemberStatus) {
   if (status === "active") return "bg-[#e7f4ed] text-[#176a4b]";
   if (status === "invited") return "bg-[#fff0d8] text-[#99550b]";
   return "bg-[#ede9e5] text-[#706a64]";
+}
+
+function getInviteError(
+  status: number,
+  payload: { code?: string; message?: string | string[] } | null,
+) {
+  if (payload?.code === "ENTITLEMENT_LIMIT_EXCEEDED") {
+    return "현재 플랜의 멤버 한도가 가득 찼습니다.";
+  }
+  if (status === 404) {
+    return "해당 이메일로 가입된 사용자를 찾을 수 없습니다.";
+  }
+  if (status === 409) {
+    return "이미 이 워크스페이스에 참여했거나 초대된 사용자입니다.";
+  }
+  const message = Array.isArray(payload?.message)
+    ? payload.message[0]
+    : payload?.message;
+  return message || "초대를 보내지 못했습니다. 다시 시도해 주세요.";
 }

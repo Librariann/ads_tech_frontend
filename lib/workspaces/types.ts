@@ -27,6 +27,14 @@ export type WorkspaceMember = {
   createdAt: string;
 };
 
+export type WorkspaceInvitation = {
+  id: string;
+  workspaceId: string;
+  workspaceName: string;
+  role: WorkspaceRole;
+  invitedAt: string;
+};
+
 export type UpdateWorkspaceInput = {
   name?: string;
   defaultCurrency?: string;
