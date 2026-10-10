@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { WorkspaceSettings } from "@/components/workspaces/workspace-settings";
 import {
+  getBillingSummary,
   getWorkspace,
   getWorkspaceMembers,
 } from "@/lib/workspaces/server";
@@ -22,11 +23,18 @@ export default async function WorkspaceSettingsPage({
 
   const returnTo = `/workspaces/${workspaceId}/settings`;
   const workspace = await getWorkspace(workspaceId, returnTo);
+  const billingSummary = await getBillingSummary(workspaceId, returnTo);
   const canManageMembers =
     workspace.role === "owner" || workspace.role === "admin";
   const members = canManageMembers
     ? await getWorkspaceMembers(workspaceId, returnTo)
     : null;
 
-  return <WorkspaceSettings workspace={workspace} members={members} />;
+  return (
+    <WorkspaceSettings
+      workspace={workspace}
+      members={members}
+      billingSummary={billingSummary}
+    />
+  );
 }
