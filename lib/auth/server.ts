@@ -15,6 +15,7 @@ export type AuthUser = {
   id: string;
   email: string;
   displayName?: string | null;
+  isPlatformAdmin: boolean;
 };
 
 export class AuthBackendUnavailableError extends Error {
