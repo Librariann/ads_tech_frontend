@@ -20,10 +20,7 @@ type AuthenticatedBackendResult = {
   clearCookies?: boolean;
 };
 
-export async function proxyAuthenticatedJson(
-  path: string,
-  init?: RequestInit,
-) {
+export async function proxyAuthenticatedJson(path: string, init?: RequestInit) {
   try {
     const result = await authenticatedBackendFetch(path, init);
     const body = await result.response.text();
@@ -64,7 +61,7 @@ async function authenticatedBackendFetch(
 
   if (accessToken) {
     const response = await fetchWithToken(path, accessToken, init);
-    if (response.status !== 401) {
+    if (response.status !== 401 || (await isIntegrationReauth(response))) {
       return { response };
     }
   }
@@ -80,7 +77,8 @@ async function authenticatedBackendFetch(
       return {
         response,
         refreshedTokens,
-        clearCookies: response.status === 401,
+        clearCookies:
+          response.status === 401 && !(await isIntegrationReauth(response)),
       };
     }
   }
@@ -102,4 +100,12 @@ function fetchWithToken(path: string, accessToken: string, init?: RequestInit) {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+}
+
+async function isIntegrationReauth(response: Response) {
+  const payload = await response
+    .clone()
+    .json()
+    .catch(() => null);
+  return payload?.code === "GOOGLE_ADS_REAUTH_REQUIRED";
 }
