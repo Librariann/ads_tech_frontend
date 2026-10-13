@@ -2,6 +2,7 @@
 
 import {
   ArrowLeft,
+  ArrowRight,
   BadgeCheck,
   Building2,
   CheckCircle2,
@@ -22,7 +23,9 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { LogoutButton } from "@/components/auth/logout-button";
+import { PlanBillingSection } from "@/components/billing/plan-billing-section";
 import type {
+  BillingSummary,
   UpdateWorkspaceInput,
   Workspace,
   WorkspaceMember,
@@ -33,6 +36,7 @@ import type {
 type WorkspaceSettingsProps = {
   workspace: Workspace;
   members: WorkspaceMember[] | null;
+  billingSummary: BillingSummary;
 };
 
 const roleLabels: Record<WorkspaceRole, string> = {
@@ -64,6 +68,7 @@ const timezones = [
 export function WorkspaceSettings({
   workspace: initialWorkspace,
   members,
+  billingSummary,
 }: WorkspaceSettingsProps) {
   const router = useRouter();
   const [workspace, setWorkspace] = useState(initialWorkspace);
@@ -270,7 +275,10 @@ export function WorkspaceSettings({
           </div>
 
           <div className="dashboard-reveal dashboard-delay-1 mt-10 grid gap-10 lg:grid-cols-[180px_minmax(0,1fr)] lg:gap-13">
-            <nav aria-label="설정 메뉴" className="space-y-1 self-start lg:sticky lg:top-8">
+            <nav
+              aria-label="설정 메뉴"
+              className="space-y-1 self-start lg:sticky lg:top-8"
+            >
               <SettingsAnchor href="#general" icon={Building2} active>
                 기본 정보
               </SettingsAnchor>
@@ -279,9 +287,14 @@ export function WorkspaceSettings({
                   멤버
                 </SettingsAnchor>
               ) : null}
-              <div className="flex min-h-10 items-center gap-2.5 px-3 text-sm font-semibold text-[#aaa39c]">
-                <CreditCard aria-hidden="true" className="size-4" /> 결제 및 플랜
-              </div>
+              <SettingsAnchor href="#billing" icon={CreditCard}>
+                결제 및 플랜
+              </SettingsAnchor>
+              {canEdit && (
+                <SettingsAnchor href="#advertising" icon={Settings2}>
+                  광고계정 등록
+                </SettingsAnchor>
+              )}
             </nav>
 
             <div className="min-w-0">
@@ -568,6 +581,27 @@ export function WorkspaceSettings({
                   </div>
                 </section>
               ) : null}
+
+              <PlanBillingSection
+                workspaceId={workspace.id}
+                role={workspace.role}
+                initialSummary={billingSummary}
+              />
+              {canEdit && (
+                <section
+                  id="advertising"
+                  className="mt-10 scroll-mt-8 border-t border-[#e9e2da] pt-8"
+                >
+                  <h2 className="text-xl font-extrabold">광고계정 등록</h2>
+                  <Link
+                    href={`/workspaces/${workspace.id}/advertising`}
+                    className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md bg-[#176a4b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#12563d]"
+                  >
+                    광고계정 등록하기
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </Link>
+                </section>
+              )}
             </div>
           </div>
         </div>
