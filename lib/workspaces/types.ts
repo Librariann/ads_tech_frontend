@@ -40,3 +40,17 @@ export type UpdateWorkspaceInput = {
   defaultCurrency?: string;
   timezone?: string;
 };
+
+export type BillingPlan = {
+  code: string;
+  name: string;
+  billingInterval: "month" | "year";
+  priceAmount: number;
+  currency: string;
+};
+
+export type BillingSummary = {
+  currentPlanCode: string | null;
+  currentPeriodEnd: string | null;
+  plans: BillingPlan[];
+};
