@@ -10,6 +10,7 @@ import {
   authBackendFetch,
 } from "@/lib/auth/server";
 import type {
+  BillingSummary,
   Workspace,
   WorkspaceInvitation,
   WorkspaceMember,
@@ -59,6 +60,21 @@ export async function getWorkspaceMembers(
   }
 
   return (await response.json()) as WorkspaceMember[];
+}
+
+export async function getBillingSummary(workspaceId: string, returnTo: string) {
+  const response = await fetchWorkspaceResponse(
+    `/workspaces/${encodeURIComponent(
+      workspaceId,
+    )}/billing/mock-payments/summary`,
+    returnTo,
+  );
+
+  if (!response.ok) {
+    throw new Error("결제 정보를 불러오지 못했습니다.");
+  }
+
+  return (await response.json()) as BillingSummary;
 }
 
 async function fetchWorkspaceJson<T>(path: string, returnTo: string) {
