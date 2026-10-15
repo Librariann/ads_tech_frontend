@@ -11,6 +11,7 @@ import {
   Plus,
   Sparkles,
   Settings2,
+  ShieldCheck,
   Store,
   Target,
   WalletCards,
@@ -102,6 +103,15 @@ export default async function HomePage() {
               {label}
             </a>
           ))}
+          {user.isPlatformAdmin ? (
+            <Link
+              href="/admin"
+              className="flex min-h-11 items-center gap-3 rounded-xl px-3.5 text-[0.94rem] font-semibold text-[#176a4b] hover:bg-[#e7f4ed]"
+            >
+              <ShieldCheck className="size-[19px]" aria-hidden="true" /> 운영
+              관리
+            </Link>
+          ) : null}
         </nav>
 
         <div className="mt-auto">
@@ -146,6 +156,16 @@ export default async function HomePage() {
               마지막 업데이트: 오늘 오전 10:24
             </p>
             <div className="flex items-center gap-2">
+              {user.isPlatformAdmin ? (
+                <Link
+                  href="/admin"
+                  aria-label="운영 관리"
+                  title="운영 관리"
+                  className="flex size-10 items-center justify-center rounded-lg text-[#176a4b] hover:bg-[#e7f4ed] lg:hidden"
+                >
+                  <ShieldCheck className="size-5" aria-hidden="true" />
+                </Link>
+              ) : null}
               <Link
                 href="/invitations"
                 aria-label="알림 보기"
@@ -186,7 +206,7 @@ export default async function HomePage() {
               </p>
             </div>
             <a
-              href="#campaigns"
+              href="/advertising"
               className="group inline-flex h-13 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-[#f26b3a] px-5 text-[0.95rem] font-bold text-[#fff8f2] shadow-[0_8px_24px_rgba(192,69,27,0.18)] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[#df582b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f26b3a] lg:self-auto"
             >
               <Plus aria-hidden="true" className="size-5" />새 광고 시작하기
