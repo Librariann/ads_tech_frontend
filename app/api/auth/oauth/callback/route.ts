@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       return redirectToLogin(requestUrl, "oauth");
     }
 
-    const response = NextResponse.redirect(new URL("/", requestUrl));
+    const response = NextResponse.redirect(new URL("/dashboard", requestUrl));
     setAuthCookies(response, tokens);
     return response;
   } catch (error) {
