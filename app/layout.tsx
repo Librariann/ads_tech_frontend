@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     template: "%s | GrowdoAds",
   },
   description: publicSite.description,
+  verification: {
+    google: "460egNMkfdLkcf_zlOZgIzpf8S7KYQ9PctdnSMDpH-8",
+  },
   icons: {
     icon: "/growdoads-kakao-icon.png",
     apple: "/growdoads-kakao-icon.png",
