@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
+import { publicSite } from "@/lib/public-site";
 
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
@@ -14,11 +15,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(publicSite.url),
   title: {
     default: "GrowdoAds",
     template: "%s | GrowdoAds",
   },
-  description: "광고 캠페인 운영 및 성과 분석 워크스페이스",
+  description: publicSite.description,
+  icons: {
+    icon: "/growdoads-kakao-icon.png",
+    apple: "/growdoads-kakao-icon.png",
+  },
 };
 
 export default function RootLayout({
