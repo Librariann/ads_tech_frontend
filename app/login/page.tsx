@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { BarChart3, ShieldCheck, Zap } from "lucide-react";
 
 import { LoginForm } from "@/components/auth/login-form";
+import { PolicyLinks } from "@/components/public/site-frame";
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "@/lib/auth/server";
 
 const errorMessages: Record<string, string> = {
@@ -29,7 +30,7 @@ export default async function LoginPage({
     (cookieStore.has(ACCESS_TOKEN_COOKIE) ||
       cookieStore.has(REFRESH_TOKEN_COOKIE))
   ) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return (
@@ -80,7 +81,12 @@ export default async function LoginPage({
       </aside>
 
       <section className="flex items-center justify-center px-5 py-12 sm:px-10 lg:px-16">
-        <LoginForm initialError={error ? errorMessages[error] : undefined} />
+        <div className="w-full max-w-[420px]">
+          <LoginForm initialError={error ? errorMessages[error] : undefined} />
+          <div className="mt-10 border-t border-slate-200 pt-5 text-sm text-slate-600">
+            <PolicyLinks />
+          </div>
+        </div>
       </section>
     </main>
   );
