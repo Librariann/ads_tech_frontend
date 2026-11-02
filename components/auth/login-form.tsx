@@ -79,7 +79,7 @@ export function LoginForm({ initialError }: LoginFormProps) {
         return;
       }
 
-      router.replace("/");
+      router.replace("/dashboard");
       router.refresh();
     } catch {
       setError("네트워크 연결을 확인한 뒤 다시 시도해 주세요.");
