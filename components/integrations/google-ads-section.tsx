@@ -9,9 +9,6 @@ import {
 } from "react";
 import {
   ArrowRight,
-  Check,
-  CheckCircle2,
-  CircleAlert,
   ExternalLink,
   Link2,
   LoaderCircle,
@@ -24,15 +21,13 @@ import {
   formatGoogleAdsId,
   googleAdsErrorMessage,
   googleAdsSetupCopy,
-  googleAdsStep,
   selectableGoogleAdsAccounts,
   type GoogleAdsOnboarding,
 } from "@/lib/integrations/google-ads";
 
 const buttonClass =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#d7ddd8] px-4 py-2 text-sm font-semibold transition-colors hover:bg-[#edf2ee] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#176a4b]";
-const primaryClass = `${buttonClass} border-transparent bg-[#176a4b] text-white hover:bg-[#12563d]`;
-const steps = ["이용 플랜", "Google 인증", "광고계정 확인", "연결 완료"];
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#d5dadd] px-4 py-2 text-sm font-medium transition-colors hover:bg-[#eef0f2] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#176a4b]";
+const primaryClass = `${buttonClass} border-transparent bg-[#18212f] text-white hover:bg-[#2a3545]`;
 
 class IntegrationError extends Error {
   constructor(
@@ -239,7 +234,6 @@ export function GoogleAdsSection({
   const afterCreation = useCallback(() => {
     void refresh(selectedConnection.current);
   }, [refresh]);
-  const step = status ? googleAdsStep(status) : null;
   const entitlement = snapshot?.entitlement;
   const setup = googleAdsSetupCopy(snapshot?.reason);
   const candidates = snapshot ? selectableGoogleAdsAccounts(snapshot) : [];
@@ -253,14 +247,29 @@ export function GoogleAdsSection({
       {callbackError && (
         <p
           role="alert"
-          className="mb-5 border-y border-[#eccbc5] bg-[#fff5f3] px-4 py-4 text-sm leading-6 text-[#a23628]"
+          className="mb-5 text-sm leading-6 text-[#a23628]"
         >
           Google 인증을 완료하지 못했습니다. 연결 상태를 확인한 뒤 필요한 경우
           다시 인증해 주세요.
         </p>
       )}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dce3dd] pb-5">
-        <h2 className="text-lg font-bold">Google Ads</h2>
+      <div className="flex min-h-11 flex-wrap items-center justify-between gap-3">
+        <h2 className="text-base font-semibold">연결 관리</h2>
+        {mode === "existing" ? <button
+          type="button"
+          title="연결 상태 다시 확인"
+          aria-label="연결 상태 다시 확인"
+          onClick={() => {
+            setMessage("");
+            void refresh(selectedConnection.current);
+          }}
+          disabled={loading || busy}
+          className={buttonClass}
+        >
+          <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
+        </button> : null}
+      </div>
+      <div className="mt-2">
         {entitlement && (
           <span className="text-sm text-[#657168]">
             전체 매체 광고계정 {entitlement.currentUsage} /{" "}
@@ -268,7 +277,7 @@ export function GoogleAdsSection({
           </span>
         )}
       </div>
-      <fieldset className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <fieldset className="mt-5 flex flex-wrap gap-1 rounded-md border border-[#d5dadd] bg-white p-1">
         <legend className="sr-only">광고계정 등록 방식</legend>
         {(
           [
@@ -278,10 +287,10 @@ export function GoogleAdsSection({
         ).map(({ value, label, icon: Icon }) => (
           <label
             key={value}
-            className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-md border px-4 py-3 text-sm font-semibold ${
+            className={`relative flex min-h-10 flex-1 cursor-pointer items-center justify-center gap-2 rounded px-3 py-2 text-sm font-medium focus-within:outline-2 focus-within:outline-[#176a4b] ${
               mode === value
-                ? "border-[#176a4b] bg-[#e7f4ed] text-[#176a4b]"
-                : "border-[#d7ddd8] text-[#657168]"
+                ? "bg-[#eef0f2] text-[#18212f]"
+                : "text-[#657168] hover:bg-[#f8f9fa]"
             }`}
           >
             <input
@@ -295,7 +304,7 @@ export function GoogleAdsSection({
                 setMessage("");
               }}
               disabled={busy}
-              className="size-4 shrink-0 accent-[#176a4b]"
+              className="sr-only"
             />
             <Icon className="size-4 shrink-0" aria-hidden="true" />
             {label}
@@ -315,37 +324,6 @@ export function GoogleAdsSection({
         />
       ) : (
         <>
-          <ol
-            aria-label="등록 단계"
-            className="grid grid-cols-2 gap-x-5 gap-y-4 border-b border-[#dce3dd] py-6 sm:grid-cols-4"
-          >
-            {steps.map((label, index) => (
-              <li
-                key={label}
-                aria-current={step === index ? "step" : undefined}
-                className={`flex min-w-0 items-center gap-2 text-sm font-semibold ${
-                  step !== null && index <= step
-                    ? "text-[#176a4b]"
-                    : "text-[#7a847c]"
-                }`}
-              >
-                <span
-                  className={`flex size-6 shrink-0 items-center justify-center rounded-full border text-xs ${
-                    step !== null && index <= step
-                      ? "border-[#176a4b] bg-[#e7f4ed]"
-                      : "border-[#cdd6cf]"
-                  }`}
-                >
-                  {step !== null && (index < step || status === "connected") ? (
-                    <Check className="size-3.5" aria-hidden="true" />
-                  ) : (
-                    index + 1
-                  )}
-                </span>
-                <span>{label}</span>
-              </li>
-            ))}
-          </ol>
           {loading && (
             <p
               role="status"
@@ -359,10 +337,10 @@ export function GoogleAdsSection({
             </p>
           )}
           {!loading && snapshot && (
-            <div className="py-7">
+            <div className="py-6">
               {status === "subscription_required" && (
                 <div>
-                  <h3 className="text-base font-bold">
+                  <h3 className="text-sm font-semibold">
                     이용 플랜을 먼저 확인해 주세요
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-[#657168]">
@@ -381,15 +359,15 @@ export function GoogleAdsSection({
               {(status === "authorization_required" ||
                 status === "reauthorization_required") && (
                 <div>
-                  <h3 className="text-base font-bold">
+                  <h3 className="text-sm font-semibold">
                     {status === "reauthorization_required"
                       ? "Google 계정을 다시 인증해 주세요"
-                      : "광고를 운영할 Google 계정을 연결하세요"}
+                      : "Google 인증이 필요합니다"}
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-[#657168]">
                     {status === "reauthorization_required"
                       ? "광고계정 접근 권한이 만료됐습니다. 기존 광고계정에 접근 가능한 Google 계정으로 인증해 주세요."
-                      : "기존 광고계정에 접근할 수 있는 Google 계정으로 인증해 주세요. 광고계정이 없다면 새 광고계정 만들기를 선택해 주세요."}
+                      : "광고계정에 접근할 수 있는 Google 계정으로 인증해 주세요."}
                   </p>
                   <button
                     type="button"
@@ -402,7 +380,7 @@ export function GoogleAdsSection({
                   </button>
                 </div>
               )}
-              {snapshot.connectionId &&
+              {snapshot.connectionId && snapshot.connections.filter((item) => item.status === "active").length > 1 &&
                 status !== "authorization_required" &&
                 status !== "reauthorization_required" &&
                 status !== "subscription_required" && (
@@ -422,7 +400,7 @@ export function GoogleAdsSection({
                           void refresh(event.target.value);
                         }}
                         disabled={busy}
-                        className="min-h-11 min-w-0 flex-1 rounded-md border border-[#d7ddd8] bg-white px-3 text-sm"
+                        className="min-h-11 min-w-0 flex-1 rounded-md border border-[#d5dadd] bg-white px-3 text-sm"
                       >
                         {snapshot.connections
                           .filter((item) => item.status === "active")
@@ -432,48 +410,20 @@ export function GoogleAdsSection({
                             </option>
                           ))}
                       </select>
-                      <button
-                        type="button"
-                        title="연결 상태 다시 확인"
-                        aria-label="연결 상태 다시 확인"
-                        onClick={() => {
-                          setMessage("");
-                          void refresh(snapshot.connectionId);
-                        }}
-                        disabled={busy}
-                        className={buttonClass}
-                      >
-                        <RefreshCw className="size-4" aria-hidden="true" />
-                      </button>
+
                     </div>
                   </div>
                 )}
               {status === "account_setup_required" && (
-                <div className="border-y border-[#e4d9bb] bg-[#fffaf0] px-4 py-5">
-                  <h3 className="flex items-start gap-2 text-base font-bold text-[#71531b]">
-                    <CircleAlert
-                      className="mt-0.5 size-5 shrink-0"
-                      aria-hidden="true"
-                    />
+                <div>
+                  <h3 className="text-sm font-semibold">
                     {setup.title}
                   </h3>
                   <p className="mt-3 text-sm leading-6 text-[#655c48]">
                     {setup.description}
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-[#655c48]">
-                    기존 계정의 가입 미완료·비활성 상태는 Google에서 확인해
-                    주세요. 별도 광고계정이 필요한 경우에는 여기에서 새 계정을
-                    만들 수 있습니다.
-                  </p>
                   <div className="mt-5 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setMode("new")}
-                      className={primaryClass}
-                    >
-                      <Plus className="size-4" aria-hidden="true" />새 광고계정
-                      만들기
-                    </button>
+
                     <a
                       href="https://ads.google.com/"
                       target="_blank"
@@ -487,18 +437,7 @@ export function GoogleAdsSection({
                       기존 계정 상태 확인
                       <span className="sr-only"> (새 탭)</span>
                     </a>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMessage("");
-                        void refresh(snapshot.connectionId);
-                      }}
-                      disabled={busy}
-                      className={buttonClass}
-                    >
-                      <RefreshCw className="size-4" aria-hidden="true" />
-                      설정 후 다시 확인
-                    </button>
+
                   </div>
                 </div>
               )}
@@ -535,7 +474,7 @@ export function GoogleAdsSection({
                     value={selected}
                     onChange={(event) => setSelected(event.target.value)}
                     disabled={busy}
-                    className="mt-3 min-h-11 w-full min-w-0 rounded-md border border-[#d7ddd8] bg-white px-3 text-sm"
+                    className="mt-3 min-h-11 w-full min-w-0 rounded-md border border-[#d5dadd] bg-white px-3 text-sm"
                   >
                     <option value="">광고계정 선택</option>
                     {candidates.map((item) => (
@@ -583,23 +522,10 @@ export function GoogleAdsSection({
                   </button>
                 </form>
               )}
-              {status === "connected" && (
-                <p
-                  role="status"
-                  className="flex items-start gap-2 text-sm font-semibold text-[#176a4b]"
-                >
-                  <CheckCircle2
-                    className="size-5 shrink-0"
-                    aria-hidden="true"
-                  />
-                  광고계정이 연결됐습니다. 연결만으로 광고가 집행되지는
-                  않습니다.
-                </p>
-              )}
               {snapshot.accounts.length > 0 && (
-                <div className="mt-6 border-t border-[#dce3dd] pt-5">
+                <div className={candidates.length > 0 ? "mt-6 border-t border-[#e2e5e7] pt-5" : undefined}>
                   <h3 className="text-sm font-bold">등록된 광고계정</h3>
-                  <ul className="mt-2 divide-y divide-[#dce3dd]">
+                  <ul className="mt-2 divide-y divide-[#e2e5e7]">
                     {snapshot.accounts.map((account) => {
                       const connection = snapshot.connections.find(
                         (item) => item.id === account.connectionId,
@@ -636,6 +562,7 @@ export function GoogleAdsSection({
                       );
                     })}
                   </ul>
+                  <p className="mt-2 text-xs leading-5 text-[#657168]">계정 연결만으로 광고가 집행되지는 않습니다.</p>
                 </div>
               )}
               {status !== "subscription_required" &&
@@ -656,21 +583,10 @@ export function GoogleAdsSection({
           {error && (
             <div
               role="alert"
-              className="my-5 border-y border-[#eccbc5] bg-[#fff5f3] px-4 py-4 text-sm leading-6 text-[#a23628]"
+              className="my-5 text-sm leading-6 text-[#a23628]"
             >
               <p>{error}</p>
-              <button
-                type="button"
-                disabled={loading || busy}
-                onClick={() => {
-                  setMessage("");
-                  void refresh();
-                }}
-                className={`${buttonClass} mt-3`}
-              >
-                <RefreshCw className="size-4" aria-hidden="true" />
-                다시 확인
-              </button>
+
             </div>
           )}
           {!loading && message && status !== "connected" && (
