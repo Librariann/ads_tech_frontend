@@ -27,9 +27,9 @@ import {
 } from "@/lib/integrations/google-ads";
 
 const buttonClass =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#d7ddd8] px-4 py-2 text-sm font-semibold hover:bg-[#edf2ee] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#176a4b]";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#d5dadd] px-4 py-2 text-sm font-semibold hover:bg-[#eef0f2] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#176a4b]";
 const fieldClass =
-  "mt-2 min-h-11 w-full min-w-0 rounded-md border border-[#cdd6cf] bg-white px-3 py-2 text-sm outline-none focus:border-[#176a4b] focus:ring-2 focus:ring-[#176a4b]/15 disabled:bg-[#f1f4f1]";
+  "mt-2 min-h-11 w-full min-w-0 rounded-md border border-[#d5dadd] bg-white px-3 py-2 text-sm outline-none focus:border-[#176a4b] focus:ring-2 focus:ring-[#176a4b]/15 disabled:bg-[#eef0f2]";
 
 export function GoogleAdsAccountCreation({
   workspaceId,
@@ -223,12 +223,11 @@ export function GoogleAdsAccountCreation({
   return (
     <div className="py-7">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="text-base font-bold">새 Google Ads 광고계정</h3>
-          <p className="mt-2 text-sm leading-6 text-[#657168]">
-            Google 계정으로 사용하는 이메일을 입력해 주세요. 생성된 광고계정의
-            관리자 초대가 발송됩니다.
-          </p>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-semibold">{availability?.availability === "available" && !showResult ? "계정 정보" : "생성 상태"}</h3>
+          {availability?.availability === "available" && !showResult ? <p className="mt-2 text-sm leading-6 text-[#657168]">
+            입력한 Google 계정 이메일로 관리자 초대를 보냅니다.
+          </p> : null}
         </div>
         <button
           type="button"
@@ -254,7 +253,7 @@ export function GoogleAdsAccountCreation({
         </p>
       )}
       {!loading && availability?.availability === "subscription_required" ? (
-        <div className="mt-5 border-y border-[#dce3dd] py-5">
+        <div className="mt-5 border-y border-[#e2e5e7] py-5">
           <p className="text-sm leading-6">
             광고계정을 만들기 전에 이용 가능한 플랜을 확인해 주세요.
           </p>
@@ -273,13 +272,13 @@ export function GoogleAdsAccountCreation({
             availability.availability !== "available" && (
               <p
                 role="status"
-                className="mt-5 border-y border-[#e4d9bb] bg-[#fffaf0] px-4 py-4 text-sm leading-6 text-[#71531b]"
+                className="mt-5 text-sm leading-6 text-[#71531b]"
               >
                 {googleAdsCreationError(unavailableCode)}
               </p>
             )}
           {showResult ? (
-            <div className="mt-6 border-y border-[#dce3dd] py-6">
+            <div className="mt-6 border-y border-[#e2e5e7] py-6">
               <h4 className="flex items-start gap-2 text-base font-bold">
                 {latest.status === "created" ||
                 latest.status === "connected" ? (
@@ -338,7 +337,7 @@ export function GoogleAdsAccountCreation({
                       type="button"
                       onClick={onImport}
                       disabled={busy}
-                      className={`${buttonClass} border-transparent bg-[#176a4b] text-white hover:bg-[#12563d]`}
+                      className={`${buttonClass} border-transparent bg-[#18212f] text-white hover:bg-[#2a3545]`}
                     >
                       <Link2 className="size-4" aria-hidden="true" />
                       초대 수락 후 계정 불러오기
@@ -371,10 +370,10 @@ export function GoogleAdsAccountCreation({
                 </button>
               )}
             </div>
-          ) : (
+          ) : availability?.availability === "available" ? (
             <form
               onSubmit={create}
-              className="mt-6 border-t border-[#dce3dd] pt-6"
+              className="mt-6 border-t border-[#e2e5e7] pt-6"
             >
               {latest?.status === "failed" && (
                 <p
@@ -487,7 +486,7 @@ export function GoogleAdsAccountCreation({
                     !invitationEmail.trim() ||
                     !invitationConsent
                   }
-                  className={`${buttonClass} border-transparent bg-[#176a4b] text-white hover:bg-[#12563d]`}
+                  className={`${buttonClass} border-transparent bg-[#18212f] text-white hover:bg-[#2a3545]`}
                 >
                   {busy ? (
                     <LoaderCircle
@@ -505,13 +504,13 @@ export function GoogleAdsAccountCreation({
                 직접 납부하며 서비스 구독료와 별개입니다.
               </p>
             </form>
-          )}
+          ) : null}
         </>
       )}
       {error && (
         <p
           role="alert"
-          className="mt-5 border-y border-[#eccbc5] bg-[#fff5f3] px-4 py-4 text-sm leading-6 text-[#a23628]"
+          className="mt-5 text-sm leading-6 text-[#a23628]"
         >
           {error}
         </p>
