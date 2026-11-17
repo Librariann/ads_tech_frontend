@@ -11,8 +11,8 @@ import {
 } from "@/lib/integrations/naver";
 
 type Snapshot = { configuration: NaverConfiguration; accounts: NaverAccount[] };
-const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#b8c4bd] px-4 text-sm font-semibold text-[#176a4b] disabled:cursor-not-allowed disabled:opacity-50";
-const fieldClass = "mt-2 min-h-11 w-full min-w-0 rounded-md border border-[#b8c4bd] bg-white px-3 text-sm disabled:opacity-50";
+const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#d5dadd] px-4 text-sm font-semibold text-[#176a4b] disabled:cursor-not-allowed disabled:opacity-50";
+const fieldClass = "mt-2 min-h-11 w-full min-w-0 rounded-md border border-[#d5dadd] bg-white px-3 text-sm disabled:opacity-50";
 const errorText = (error: unknown) => error instanceof NaverApiError ? error.message : "네이버 검색광고 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
 
 export function NaverSection({ workspaceId, role }: { workspaceId: string; role: string }) {
@@ -112,20 +112,24 @@ export function NaverSection({ workspaceId, role }: { workspaceId: string; role:
     setReportVersion((value) => value + 1);
   }
 
-  return <section id="naver" aria-label="네이버 검색광고" className="border-y border-[#dce3dd] py-6">
+  return <section id="naver" aria-label="네이버 검색광고">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-lg font-bold">네이버 검색광고 <Link href={`/workspaces/${workspaceId}/naver`} className="ml-2 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-[#176a4b]">일시중지 관리<ArrowRight className="size-4" aria-hidden="true" /></Link></h2>
-      <button type="button" className={actionClass} disabled={loading || busy} onClick={() => { setActionError(""); setVersion((value) => value + 1); }}>
-        <RefreshCw className="size-4" aria-hidden="true" />상태 다시 확인
-      </button>
+      <h2 className="text-base font-semibold">연결 관리</h2>
+      <div className="flex items-center gap-3">
+        <Link href={`/workspaces/${workspaceId}/naver`} className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-[#657168]">일시중지 관리<ArrowRight className="size-4" aria-hidden="true" /></Link>
+        <button type="button" title="상태 다시 확인" aria-label="상태 다시 확인" className={actionClass} disabled={loading || busy} onClick={() => { setActionError(""); setVersion((value) => value + 1); }}>
+          <RefreshCw className="size-4" aria-hidden="true" /><span className="sr-only">상태 다시 확인</span>
+        </button>
+      </div>
     </div>
     {loading && <p role="status" className="flex items-center gap-2 py-7 text-sm"><LoaderCircle className="size-4 animate-spin" aria-hidden="true" />네이버 연결 상태를 확인하고 있습니다.</p>}
     {result?.key === key && result.error && <p role="alert" className="mt-4 text-sm leading-6 text-[#a23628]">{result.error}</p>}
     {data && !configured && <div className="py-5"><h3 className="font-bold">네이버 연결 설정이 아직 준비되지 않았습니다</h3>
       <p className="mt-2 text-sm leading-6 text-[#657168]">서비스 관리자에게 네이버 검색광고 연결 설정 완료를 요청해 주세요.</p></div>}
     {configured && <>
-      {canManage ? <form method="post" autoComplete="off" onSubmit={register} className="border-b border-[#dce3dd] py-6" aria-busy={busy}>
-        <h3 className="font-bold">광고계정 등록</h3>
+      {canManage ? <details open={!accounts?.length} className="border-b border-[#e2e5e7] py-5">
+        <summary className="cursor-pointer text-sm font-semibold">광고계정 추가</summary>
+        <form method="post" autoComplete="off" onSubmit={register} className="pt-2" aria-busy={busy}>
         <div className="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
           <label className="min-w-0 text-sm font-semibold" htmlFor="naver-customer-id">네이버 검색광고 고객 ID (Customer ID)
             <input id="naver-customer-id" name="customerId" className={fieldClass} type="text" inputMode="numeric" pattern="[1-9][0-9]{0,14}" maxLength={15} required autoComplete="off" disabled={busy} />
@@ -143,16 +147,16 @@ export function NaverSection({ workspaceId, role }: { workspaceId: string; role:
         <button type="submit" className={`${actionClass} mt-5`} disabled={busy}>
           {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <Plus className="size-4" aria-hidden="true" />}계정 등록
         </button>
-      </form> : <p className="mt-5 text-sm leading-6 text-[#657168]">광고계정 등록은 워크스페이스 소유자 또는 관리자에게 요청해 주세요.</p>}
+      </form></details> : <p className="mt-5 text-sm leading-6 text-[#657168]">광고계정 등록은 워크스페이스 소유자 또는 관리자에게 요청해 주세요.</p>}
       <div className="py-6">
         <h3 className="font-bold">등록된 광고계정</h3>
-        {accounts?.length ? <ul className="mt-3 divide-y divide-[#dce3dd]">{accounts.map((a) => <li key={a.id} className="py-3">
+        {accounts?.length ? <ul className="mt-3 divide-y divide-[#e2e5e7]">{accounts.map((a) => <li key={a.id} className="py-3">
           <p className="break-words text-sm font-semibold">{a.name}</p>
           <p className="mt-1 break-words text-xs leading-6 text-[#657168]">고객 ID: {a.externalAccountId} · KRW · Asia/Seoul</p>
-          <p className="break-words text-xs leading-6 text-[#657168]">계정 상태: {a.status} · 연결 상태: {a.connectionStatus}</p>
+          <p className={`mt-1 text-xs ${a.status === "active" && a.connectionStatus === "active" ? "text-[#176a4b]" : "text-[#9b5a22]"}`}>{a.status === "active" && a.connectionStatus === "active" ? "등록됨" : "연결 확인 필요"}</p>
         </li>)}</ul> : <p className="mt-3 text-sm text-[#657168]">등록된 네이버 검색광고 계정이 없습니다.</p>}
       </div>
-      {!!accounts?.length && <div className="border-t border-[#dce3dd] py-6" aria-busy={reportLoading}>
+      {!!accounts?.length && <div className="border-t border-[#e2e5e7] py-6" aria-busy={reportLoading}>
         <h3 className="font-bold">캠페인 성과</h3>
         <label className="mt-4 block min-w-0 text-sm font-semibold" htmlFor="naver-report-account">광고계정
           <select id="naver-report-account" className={fieldClass} value={accountId} onChange={(event) => setSelectedAccount(event.target.value)}>
@@ -177,7 +181,7 @@ export function NaverSection({ workspaceId, role }: { workspaceId: string; role:
         {report && <>
           <p className="mt-5 text-sm leading-6 text-[#657168]">{report.period.dateFrom} ~ {report.period.dateTo} · 한국 시간</p>
           <h4 className="mt-4 text-sm font-bold">조회된 캠페인 합계</h4>
-          <dl className="mt-3 grid grid-cols-1 gap-4 border-y border-[#dce3dd] py-4 sm:grid-cols-3">
+          <dl className="mt-3 grid grid-cols-1 gap-4 border-y border-[#e2e5e7] py-4 sm:grid-cols-3">
             <div className="min-w-0"><dt className="text-xs text-[#657168]">노출</dt><dd className="mt-1 break-all text-base font-bold tabular-nums">{formatNaverInteger(report.totals.impressions)}</dd></div>
             <div className="min-w-0"><dt className="text-xs text-[#657168]">클릭</dt><dd className="mt-1 break-all text-base font-bold tabular-nums">{formatNaverInteger(report.totals.clicks)}</dd></div>
             <div className="min-w-0"><dt className="text-xs text-[#657168]">광고비 (VAT 포함)</dt><dd className="mt-1 break-all text-base font-bold tabular-nums">{formatNaverMoney(report.totals.cost)}</dd></div>
@@ -185,12 +189,12 @@ export function NaverSection({ workspaceId, role }: { workspaceId: string; role:
           {report.campaigns.length ? <div role="region" aria-label="네이버 캠페인 성과 표" tabIndex={0} className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[660px] table-fixed text-left text-sm">
               <caption className="sr-only">네이버 검색광고 캠페인 성과 · 광고비는 KRW, VAT 포함</caption>
-              <thead className="border-b border-[#dce3dd] text-xs text-[#657168]"><tr>
+              <thead className="border-b border-[#e2e5e7] text-xs text-[#657168]"><tr>
                 <th scope="col" className="w-44 px-2 py-3">캠페인</th><th scope="col" className="w-28 px-2 py-3">상태 / 유형</th>
                 <th scope="col" className="px-2 py-3 text-right">일 예산</th><th scope="col" className="px-2 py-3 text-right">노출</th>
                 <th scope="col" className="px-2 py-3 text-right">클릭</th><th scope="col" className="px-2 py-3 text-right">광고비 (VAT 포함)</th>
               </tr></thead>
-              <tbody className="divide-y divide-[#dce3dd]">{report.campaigns.map((c) => <tr key={c.id}>
+              <tbody className="divide-y divide-[#e2e5e7]">{report.campaigns.map((c) => <tr key={c.id}>
                 <th scope="row" className="break-words px-2 py-4 font-semibold">{c.name}<span className="mt-1 block break-all text-xs font-normal text-[#657168]">{c.id}</span></th>
                 <td className="break-words px-2 py-4 text-xs leading-6">{c.status}<br />{c.campaignType}</td>
                 <td className="break-all px-2 py-4 text-right tabular-nums">{formatNaverMoney(c.dailyBudget)}</td>
@@ -206,8 +210,5 @@ export function NaverSection({ workspaceId, role }: { workspaceId: string; role:
     </>}
     {actionError && <p role="alert" className="mt-4 text-sm leading-6 text-[#a23628]">{actionError}</p>}
     {notice && <p role="status" className="mt-4 text-sm text-[#176a4b]">{notice}</p>}
-    <Link href={`/workspaces/${workspaceId}/settings`} className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#176a4b]">
-      워크스페이스 및 구독 확인<ArrowRight className="size-4" aria-hidden="true" />
-    </Link>
   </section>;
 }
