@@ -8,17 +8,18 @@ export const metadata = { title: "광고 시작하기" };
 export default async function AdvertisingEntryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ googleAds?: string }>;
+  searchParams: Promise<{ googleAds?: string; meta?: string; platform?: string }>;
 }) {
-  const callbackFailed = (await searchParams).googleAds === "connection_failed";
-  const workspaces = (await getWorkspaces("/advertising")).filter(
+  const query = await searchParams;
+  const callbackFailed = query.googleAds === "connection_failed";
+  const metaFailed = query.meta === "connection_failed";
+  const suffix = metaFailed ? "?platform=meta&meta=connection_failed" : callbackFailed ? "?googleAds=connection_failed" : query.platform === "naver" ? "?platform=naver" : "";
+  const workspaces = (await getWorkspaces(metaFailed ? "/advertising?meta=connection_failed" : query.platform === "naver" ? "/advertising?platform=naver" : "/advertising")).filter(
     (workspace) => workspace.role === "owner" || workspace.role === "admin",
   );
   if (workspaces.length === 1)
     redirect(
-      `/workspaces/${workspaces[0].id}/advertising${
-        callbackFailed ? "?googleAds=connection_failed" : ""
-      }`,
+      `/workspaces/${workspaces[0].id}/advertising${suffix}`,
     );
   return (
     <main className="min-h-screen bg-[#fafbf9] px-5 py-10 text-[#18212f] sm:px-8">
@@ -32,9 +33,9 @@ export default async function AdvertisingEntryPage({
         <h1 className="mt-7 text-2xl font-extrabold">
           광고를 운영할 워크스페이스
         </h1>
-        {callbackFailed && (
+        {(callbackFailed || metaFailed) && (
           <p role="alert" className="mt-5 text-sm leading-6 text-[#a23628]">
-            Google 인증을 완료하지 못했습니다. 워크스페이스를 선택한 뒤 다시
+            {metaFailed ? "Meta" : "Google"} 인증을 완료하지 못했습니다. 워크스페이스를 선택한 뒤 다시
             확인해 주세요.
           </p>
         )}
@@ -43,9 +44,7 @@ export default async function AdvertisingEntryPage({
             {workspaces.map((workspace) => (
               <li key={workspace.id}>
                 <Link
-                  href={`/workspaces/${workspace.id}/advertising${
-                    callbackFailed ? "?googleAds=connection_failed" : ""
-                  }`}
+                  href={`/workspaces/${workspace.id}/advertising${suffix}`}
                   className="flex min-h-20 items-center gap-3 py-4 hover:bg-[#edf2ee]"
                 >
                   <Building2

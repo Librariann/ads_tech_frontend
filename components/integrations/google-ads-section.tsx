@@ -35,7 +35,10 @@ const primaryClass = `${buttonClass} border-transparent bg-[#176a4b] text-white 
 const steps = ["이용 플랜", "Google 인증", "광고계정 확인", "연결 완료"];
 
 class IntegrationError extends Error {
-  constructor(public code: string | undefined, status: number) {
+  constructor(
+    public code: string | undefined,
+    status: number,
+  ) {
     super(googleAdsErrorMessage(code, status));
   }
 }
@@ -207,7 +210,9 @@ export function GoogleAdsSection({
       });
       await refresh(snapshot.connectionId);
       setMessage(
-        "광고계정을 연결했습니다. 광고가 자동으로 집행되지는 않습니다.",
+        account.testAccount
+          ? "광고계정을 연결했습니다. 현재 연결 계정에서는 실제 광고 노출·과금이 발생하지 않습니다."
+          : "광고계정을 연결했습니다. 광고가 자동으로 집행되지는 않습니다.",
       );
     } catch (cause) {
       if (
@@ -550,6 +555,17 @@ export function GoogleAdsSection({
                       </option>
                     ))}
                   </select>
+                  {candidates.some(
+                    (item) =>
+                      item.testAccount &&
+                      `${item.customerId}:${item.loginCustomerId ?? ""}` ===
+                        selected,
+                  ) ? (
+                    <p className="mt-3 text-sm leading-6 text-[#71531b]">
+                      현재 연결 계정에서는 실제 광고가 노출되거나 광고비가
+                      청구되지 않으며, 성과 수치는 비어 있습니다.
+                    </p>
+                  ) : null}
                   <button
                     type="submit"
                     disabled={!selected || busy}
@@ -613,8 +629,8 @@ export function GoogleAdsSection({
                             {active
                               ? "등록됨"
                               : connection?.status === "reauth_required"
-                              ? "재인증 필요"
-                              : "연결 확인 필요"}
+                                ? "재인증 필요"
+                                : "연결 확인 필요"}
                           </span>
                         </li>
                       );

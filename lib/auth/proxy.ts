@@ -107,5 +107,5 @@ async function isIntegrationReauth(response: Response) {
     .clone()
     .json()
     .catch(() => null);
-  return payload?.code === "GOOGLE_ADS_REAUTH_REQUIRED";
+  return payload?.code === "GOOGLE_ADS_REAUTH_REQUIRED" || payload?.code === "META_ADS_REAUTH_REQUIRED" || payload?.code === "NAVER_ADS_AUTH_FAILED";
 }

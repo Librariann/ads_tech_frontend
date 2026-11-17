@@ -1,17 +1,13 @@
 "use client";
 
 import {
-  ArrowRight,
-  Check,
   CheckCircle2,
-  CircleAlert,
   Clock3,
   CreditCard,
   LoaderCircle,
   LockKeyhole,
   ReceiptText,
   RotateCcw,
-  ShieldCheck,
   XCircle,
 } from "lucide-react";
 import {
@@ -20,7 +16,6 @@ import {
   type PaymentResult,
 } from "pay-rehearsal";
 import { useState } from "react";
-import Link from "next/link";
 
 import type { BillingSummary, WorkspaceRole } from "@/lib/workspaces/types";
 
@@ -139,212 +134,100 @@ export function PlanBillingSection({
   return (
     <section
       id="billing"
-      className="mt-15 scroll-mt-8 border-t border-[#d9d1c8] pt-10"
+      className="mt-10 scroll-mt-8 border-t border-[#d5dadd] pt-7"
     >
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-xl font-extrabold">결제 및 플랜</h2>
-            <span className="rounded-full bg-[#fff0e9] px-2.5 py-1 text-[0.68rem] font-bold text-[#b43c18]">
-              TEST
-            </span>
+      <h2 className="text-base font-semibold">결제 및 플랜</h2>
+      <p className="mt-2 text-xs leading-5 text-[#737973]">
+        테스트 결제는 실제 청구 없이 테스트 구독에 반영됩니다.
+      </p>
+
+      <div className="mt-5 divide-y divide-[#e2e5e7] border-y border-[#e2e5e7]">
+        {initialSummary.plans.map((plan) => (
+          <div
+            key={plan.code}
+            className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4"
+          >
+            <div className="flex items-center gap-3">
+              <h3 className="text-sm font-semibold">{plan.name}</h3>
+              {currentPlanCode === plan.code ? (
+                <span className="text-xs font-medium text-[#176a4b]">사용 중</span>
+              ) : null}
+            </div>
+            <p className="text-sm tabular-nums">
+              {formatCurrency(plan.priceAmount, plan.currency)}
+              <span className="ml-1 text-xs text-[#737973]">
+                /{plan.billingInterval === "year" ? "년" : "월"}
+              </span>
+            </p>
           </div>
-          <p className="mt-2 text-sm leading-6 text-[#737973]">
-            현재 플랜과 월간 사용 한도를 관리합니다.
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#737973]">
-          <ShieldCheck aria-hidden="true" className="size-4 text-[#218a62]" />
-          카드 정보를 저장하지 않음
-        </span>
+        ))}
       </div>
 
-      <div className="mt-7 flex items-start gap-3 border-y border-[#e7d8cc] bg-[#fff7f1] px-4 py-3.5 text-sm leading-6 text-[#75412f]">
-        <CircleAlert
-          aria-hidden="true"
-          className="mt-1 size-4 shrink-0 text-[#d3542b]"
-        />
-        <p>
-          테스트 결제입니다. 실제 청구는 발생하지 않지만 승인 결과는 테스트
-          구독에 반영됩니다.
+      {!currentPlanCode ? (
+        <p className="mt-3 text-sm text-[#737973]">사용 중인 플랜이 없습니다.</p>
+      ) : initialSummary.currentPeriodEnd &&
+        currentPlanCode === initialSummary.currentPlanCode ? (
+        <p className="mt-3 text-xs text-[#737973]">
+          이용 기간 종료 {formatDateTime(initialSummary.currentPeriodEnd)}
         </p>
-      </div>
+      ) : null}
 
-      <div className="mt-8 grid overflow-hidden rounded-lg border border-[#ded7cf] bg-[#fffdf9] md:grid-cols-2">
-        <PlanColumn
-          name="Starter"
-          price="무료"
-          description="광고 운영을 시작하는 소규모 워크스페이스"
-          features={["광고계정 2개", "기본 성과 리포트", "멤버 3명"]}
-          current={currentPlanCode === "starter"}
-        />
-
-        <div className="border-t border-[#ded7cf] p-5 sm:p-6 md:border-l md:border-t-0">
-          <div className="flex min-h-7 items-center justify-between gap-3">
-            <h3 className="text-base font-extrabold">Pro</h3>
-            <span className="text-xs font-bold text-[#b43c18]">월간</span>
-          </div>
-          <p className="mt-4 text-2xl font-black">
-            {proPlan ? formatCurrency(proPlan.priceAmount) : "플랜 준비 중"}
-            <span className="ml-1 text-xs font-semibold text-[#858079]">
-              /월
-            </span>
-          </p>
-          <p className="mt-2 min-h-10 text-sm leading-5 text-[#77716b]">
-            여러 광고계정과 팀 운영이 필요한 워크스페이스
-          </p>
-          <ul className="mt-5 space-y-2.5">
-            {["광고계정 10개", "확장 성과 리포트", "멤버 10명"].map(
-              (feature) => (
-                <li
-                  key={feature}
-                  className="flex items-center gap-2 text-sm font-semibold text-[#4c554f]"
-                >
-                  <Check
-                    aria-hidden="true"
-                    className="size-4 shrink-0 text-[#d3542b]"
-                  />
-                  {feature}
-                </li>
-              ),
-            )}
-          </ul>
-
-          <div className="mt-6 border-t border-[#eee7df] pt-5">
-            {currentPlanCode === "pro" ? (
-              <p className="mb-3 text-xs font-bold text-[#176a4b]">
-                현재 사용 중인 플랜입니다.
-              </p>
-            ) : null}
-            {canManageBilling ? (
-              <>
-                <label
-                  htmlFor="mock-payment-result"
-                  className="text-xs font-bold text-[#69645f]"
-                >
-                  테스트 결과
-                </label>
-                <select
-                  id="mock-payment-result"
-                  value={scenario}
-                  onChange={(event) =>
-                    setScenario(event.target.value as MockPaymentScenario)
-                  }
-                  disabled={isOpen || currentPlanCode === "pro"}
-                  className="mt-2 h-10 w-full rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12 disabled:cursor-not-allowed disabled:bg-[#f2eee8]"
-                >
-                  {scenarioOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={checkout}
-                  disabled={isOpen || currentPlanCode === "pro"}
-                  className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#18212f] px-4 text-sm font-bold text-[#fff8f2] transition-colors hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#f26b3a] disabled:cursor-wait disabled:bg-[#aaa39c]"
-                >
-                  {isOpen ? (
-                    <LoaderCircle
-                      aria-hidden="true"
-                      className="size-4 animate-spin"
-                    />
-                  ) : (
-                    <CreditCard aria-hidden="true" className="size-4" />
-                  )}
-                  {isOpen
-                    ? "결제 진행 중"
-                    : currentPlanCode === "pro"
-                    ? "Pro 사용 중"
-                    : "Pro 테스트 결제"}
-                </button>
-              </>
+      {canManageBilling && currentPlanCode !== "pro" && proPlan ? (
+        <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
+          <details className="text-xs text-[#737973]">
+            <summary className="cursor-pointer py-2 font-medium focus-visible:outline-2 focus-visible:outline-[#f26b3a]">
+              테스트 옵션
+            </summary>
+            <label htmlFor="mock-payment-result" className="mt-2 block">
+              결제 결과
+            </label>
+            <select
+              id="mock-payment-result"
+              value={scenario}
+              onChange={(event) =>
+                setScenario(event.target.value as MockPaymentScenario)
+              }
+              disabled={isOpen}
+              className="mt-2 h-10 rounded-md border border-[#d5dadd] bg-[#ffffff] px-3 text-sm text-[#18212f] focus-visible:outline-2 focus-visible:outline-[#f26b3a]"
+            >
+              {scenarioOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </details>
+          <button
+            type="button"
+            onClick={checkout}
+            disabled={isOpen}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#18212f] px-4 text-sm font-medium text-[#ffffff] hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a] disabled:cursor-wait disabled:opacity-50"
+          >
+            {isOpen ? (
+              <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
             ) : (
-              <p className="flex items-start gap-2 text-sm leading-6 text-[#77716b]">
-                <LockKeyhole
-                  aria-hidden="true"
-                  className="mt-1 size-4 shrink-0"
-                />
-                플랜 결제는 워크스페이스 소유자만 진행할 수 있습니다.
-              </p>
+              <CreditCard aria-hidden="true" className="size-4" />
             )}
-          </div>
+            {isOpen ? "결제 진행 중" : "Pro 테스트 결제"}
+          </button>
         </div>
-      </div>
+      ) : !canManageBilling ? (
+        <p className="mt-4 flex items-center gap-2 text-xs text-[#737973]">
+          <LockKeyhole aria-hidden="true" className="size-3.5 shrink-0" />
+          플랜 변경은 소유자만 가능합니다.
+        </p>
+      ) : null}
 
       <div aria-live="polite">
         {result ? <PaymentResultPanel result={result} /> : null}
         {error ? (
-          <div
-            role="alert"
-            className="mt-5 flex items-start gap-2.5 border-t border-[#edcfc4] pt-4 text-sm font-semibold text-[#a13d21]"
-          >
+          <p role="alert" className="mt-4 flex items-start gap-2 text-sm text-[#a13d21]">
             <XCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
             {error}
-          </div>
-        ) : null}
-      </div>
-      {currentPlanCode && (role === "owner" || role === "admin") ? (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#ded7cf] pt-5">
-          <p className="text-sm font-semibold text-[#176a4b]">
-            이용 플랜이 준비됐습니다.
           </p>
-          <Link
-            href={`/workspaces/${workspaceId}/advertising`}
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[#176a4b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#12563d]"
-          >
-            광고계정 등록하기
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
-function PlanColumn({
-  name,
-  price,
-  description,
-  features,
-  current,
-}: {
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
-  current?: boolean;
-}) {
-  return (
-    <div className="p-5 sm:p-6">
-      <div className="flex min-h-7 items-center justify-between gap-3">
-        <h3 className="text-base font-extrabold">{name}</h3>
-        {current ? (
-          <span className="rounded-full bg-[#e7f4ed] px-2.5 py-1 text-[0.68rem] font-bold text-[#176a4b]">
-            현재 플랜
-          </span>
         ) : null}
       </div>
-      <p className="mt-4 text-2xl font-black">{price}</p>
-      <p className="mt-2 min-h-10 text-sm leading-5 text-[#77716b]">
-        {description}
-      </p>
-      <ul className="mt-5 space-y-2.5">
-        {features.map((feature) => (
-          <li
-            key={feature}
-            className="flex items-center gap-2 text-sm font-semibold text-[#4c554f]"
-          >
-            <Check
-              aria-hidden="true"
-              className="size-4 shrink-0 text-[#218a62]"
-            />
-            {feature}
-          </li>
-        ))}
-      </ul>
-    </div>
+    </section>
   );
 }
 
@@ -410,7 +293,7 @@ function ResultShell({
     success: "border-[#b9ddcc] text-[#176a4b]",
     pending: "border-[#ead39b] text-[#795b10]",
     error: "border-[#edcfc4] text-[#a13d21]",
-    neutral: "border-[#d9d1c8] text-[#606762]",
+    neutral: "border-[#d5dadd] text-[#606762]",
   };
 
   return (
@@ -421,9 +304,6 @@ function ResultShell({
       <div className="min-w-0">
         <p className="text-sm font-extrabold">{title}</p>
         <p className="mt-1 break-words text-xs leading-5">{children}</p>
-        <p className="mt-1 text-xs font-semibold">
-          Mock 결제 결과가 테스트 구독 상태에 반영됩니다.
-        </p>
       </div>
     </div>
   );
@@ -510,10 +390,10 @@ function clearIdempotencyKey(workspaceId: string) {
   sessionStorage.removeItem(`mock-payment-idempotency:${workspaceId}`);
 }
 
-function formatCurrency(amount: number) {
+function formatCurrency(amount: number, currency: string) {
   return new Intl.NumberFormat("ko-KR", {
     style: "currency",
-    currency: "KRW",
+    currency,
     maximumFractionDigits: 0,
   }).format(amount);
 }

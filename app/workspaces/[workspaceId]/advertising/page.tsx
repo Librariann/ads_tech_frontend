@@ -2,20 +2,28 @@ import { ArrowLeft, ArrowRight, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GoogleAdsSection } from "@/components/integrations/google-ads-section";
+import { MetaSection } from "@/components/integrations/meta-section";
+import { NaverSection } from "@/components/integrations/naver-section";
+import { isMetaId } from "@/lib/integrations/meta";
 import { getWorkspace } from "@/lib/workspaces/server";
 
 export const metadata = { title: "광고계정 등록" };
 
 export default async function AdvertisingSetupPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ workspaceId: string }>;
+  searchParams: Promise<{ platform?: string; meta?: string; connectionId?: string }>;
 }) {
   const { workspaceId } = await params;
+  const query = await searchParams;
+  const meta = query.platform === "meta";
+  const naver = query.platform === "naver";
   if (!/^[1-9]\d*$/.test(workspaceId)) notFound();
   const workspace = await getWorkspace(
     workspaceId,
-    `/workspaces/${workspaceId}/advertising`,
+    `/workspaces/${workspaceId}/advertising${meta ? "?platform=meta" : naver ? "?platform=naver" : ""}`,
   );
   const canManage = workspace.role === "owner" || workspace.role === "admin";
   return (
@@ -43,21 +51,20 @@ export default async function AdvertisingSetupPage({
           aria-label="광고 매체"
           className="mb-7 flex flex-wrap items-center gap-5 border-b border-[#dce3dd] text-sm"
         >
-          <a
-            href="#google-ads"
-            aria-current="page"
-            className="border-b-2 border-[#176a4b] py-3 font-bold text-[#176a4b]"
+          <Link
+            href={`/workspaces/${workspaceId}/advertising`}
+            aria-current={!meta && !naver ? "page" : undefined}
+            className={`border-b-2 py-3 font-bold ${!meta && !naver ? "border-[#176a4b] text-[#176a4b]" : "border-transparent text-[#657168]"}`}
           >
             Google Ads
-          </a>
-          <span aria-disabled="true" className="py-3 text-[#7a847c]">
-            Meta <span className="ml-1 text-xs">준비 중</span>
-          </span>
-          <span aria-disabled="true" className="py-3 text-[#7a847c]">
-            네이버 <span className="ml-1 text-xs">준비 중</span>
-          </span>
+          </Link>
+          <Link href={`/workspaces/${workspaceId}/advertising?platform=meta`} aria-current={meta ? "page" : undefined}
+            className={`border-b-2 py-3 font-bold ${meta ? "border-[#176a4b] text-[#176a4b]" : "border-transparent text-[#657168]"}`}>Meta</Link>
+          <Link href={`/workspaces/${workspaceId}/advertising?platform=naver`} aria-current={naver ? "page" : undefined}
+            className={`border-b-2 py-3 font-bold ${naver ? "border-[#176a4b] text-[#176a4b]" : "border-transparent text-[#657168]"}`}>네이버</Link>
         </nav>
-        {canManage ? (
+        {naver ? <NaverSection key={workspaceId} workspaceId={workspaceId} role={workspace.role} /> : meta ? <MetaSection key={workspaceId} workspaceId={workspaceId} role={workspace.role} callback={query.meta}
+          initialConnectionId={isMetaId(query.connectionId) ? query.connectionId : undefined} /> : canManage ? (
           <GoogleAdsSection
             workspaceId={workspaceId}
             workspaceName={workspace.name}

@@ -30,7 +30,8 @@ export type GoogleAdsCreationAvailability = {
 };
 
 export function googleAdsCreationError(code?: string) {
-  if (code === "GOOGLE_ADS_ACCOUNT_CREATION_API_ACCESS_REQUIRED") return "서비스의 Google Ads API 기본 접근 권한 승인이 필요합니다. 서비스 관리자가 Cloud 콘솔에서 권한을 확인해야 합니다. 기존 계정 연결은 이용할 수 있습니다.";
+  if (code === "GOOGLE_ADS_ACCOUNT_CREATION_API_ACCESS_REQUIRED")
+    return "서비스의 Google Ads API 기본 접근 권한 승인이 필요합니다. 서비스 관리자가 Cloud 콘솔에서 권한을 확인해야 합니다. 기존 계정 연결은 이용할 수 있습니다.";
   if (code === "GOOGLE_ADS_ACCOUNT_CREATION_NOT_CONFIGURED")
     return "서비스의 Google 광고계정 생성 설정이 아직 준비되지 않았습니다. 기존 계정 연결은 이용할 수 있습니다.";
   if (code === "GOOGLE_ADS_MANAGER_ACCESS_REQUIRED")
@@ -60,6 +61,7 @@ export type AvailableGoogleAdsAccount = {
   currencyCode: string;
   timeZone: string;
   manager: boolean;
+  testAccount?: boolean;
   status: string;
   loginCustomerId?: string;
 };

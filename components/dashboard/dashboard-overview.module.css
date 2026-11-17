@@ -1,0 +1,54 @@
+.overview,
+.overview * {
+  letter-spacing: 0;
+}
+
+.overview {
+  min-width: 0;
+}
+
+.skeleton {
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 4px;
+  background-color: #e9e3dd;
+  vertical-align: middle;
+  animation: loading-pulse 1.8s ease-in-out infinite;
+}
+
+.skeletonDark {
+  background-color: #344356;
+}
+
+.loadingSpinner {
+  animation: loading-spin 1s linear infinite;
+}
+
+.loadingCampaigns {
+  min-height: 212px;
+}
+
+@media (min-width: 640px) {
+  .loadingCampaigns {
+    min-height: 124px;
+  }
+}
+
+@keyframes loading-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .loadingSpinner {
+    animation: none;
+  }
+}

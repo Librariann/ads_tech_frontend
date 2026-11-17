@@ -1,18 +1,19 @@
 export default function WorkspaceSettingsLoading() {
   return (
-    <div className="min-h-screen bg-[#faf8f5] lg:flex">
-      <aside className="hidden w-[248px] border-r border-[#e9e2da] bg-[#fdfbf8] lg:block" />
-      <main className="flex-1 px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
-        <div className="mx-auto max-w-[960px] animate-pulse">
-          <div className="h-4 w-28 rounded bg-[#e9e2da]" />
-          <div className="mt-7 h-9 w-64 rounded bg-[#ded7cf]" />
-          <div className="mt-4 h-4 w-80 max-w-full rounded bg-[#e9e2da]" />
-          <div className="mt-12 border-t border-[#e2dbd3] pt-8">
-            <div className="h-6 w-36 rounded bg-[#ded7cf]" />
-            <div className="mt-8 space-y-7">
-              <div className="h-12 rounded-lg bg-[#ebe5de]" />
-              <div className="h-12 rounded-lg bg-[#ebe5de]" />
-              <div className="h-12 rounded-lg bg-[#ebe5de]" />
+    <div aria-label="설정 불러오는 중" aria-busy="true" className="min-h-screen bg-[#f8f9fa] lg:flex">
+      <aside className="hidden w-[248px] shrink-0 border-r border-[#e2e5e7] bg-white lg:block" />
+      <main className="min-w-0 flex-1">
+        <div className="mx-auto max-w-[1040px] px-5 py-8 motion-safe:animate-pulse sm:px-8 sm:py-11 lg:px-12 lg:py-13">
+          <div className="h-4 w-28 rounded bg-[#e2e5e7]" />
+          <div className="mt-7 h-7 w-56 rounded bg-[#e2e5e7]" />
+          <div className="mt-4 h-4 w-64 max-w-full rounded bg-[#e2e5e7]" />
+          <div className="mt-8 h-14 border-b border-[#e2e5e7]" />
+          <div className="mt-8">
+            <div className="h-5 w-24 rounded bg-[#e2e5e7]" />
+            <div className="mt-7 space-y-6">
+              <div className="h-16 rounded-md bg-[#eef0f2]" />
+              <div className="h-16 rounded-md bg-[#eef0f2]" />
+              <div className="h-16 rounded-md bg-[#eef0f2]" />
             </div>
           </div>
         </div>

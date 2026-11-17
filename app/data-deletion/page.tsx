@@ -10,7 +10,7 @@ import { publicSite } from "@/lib/public-site";
 export const metadata: Metadata = {
   title: "데이터 삭제 요청",
   description:
-    "GrowdoAds 회원 탈퇴, Google Ads 연결 권한 철회와 보관 데이터 삭제를 요청하는 방법입니다.",
+    "GrowdoAds 회원 탈퇴, Google Ads·Meta 연결 권한 철회와 보관 데이터 삭제를 요청하는 방법입니다.",
   alternates: { canonical: `${publicSite.url}/data-deletion` },
 };
 
@@ -41,6 +41,25 @@ const sections: LegalSection[] = [
     ),
   },
   {
+    id: "meta-revoke",
+    title: "Meta 접근 권한 철회",
+    content: (
+      <>
+        <p>
+          Facebook 계정의 비즈니스 통합 설정에서 GrowdoAds 연결에 사용한 앱을
+          선택하고 접근 권한을 철회할 수 있습니다. 앱 이름은 Meta에 등록된
+          이름으로 표시될 수 있습니다.
+        </p>
+        <p>
+          Meta 권한 철회는 향후 데이터 접근을 제한합니다. GrowdoAds에 저장된
+          연결 토큰·광고계정 정보의 삭제는 아래 연락처로 별도 요청해 주세요.
+          이 조치가 Meta 광고계정 삭제나 집행 중인 광고 중지를 대신하지는
+          않습니다.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "request",
     title: "삭제·탈퇴 요청 보내기",
     content: (
@@ -59,7 +78,7 @@ const sections: LegalSection[] = [
           <li>회원 가입에 사용한 이메일</li>
           <li>관련 워크스페이스 이름 또는 ID</li>
           <li>
-            요청 범위: Google 연결 정보 삭제 / 특정 워크스페이스 정보 / 회원
+            요청 범위: Google·Meta 연결 정보 삭제 / 특정 워크스페이스 정보 / 회원
             탈퇴 등
           </li>
         </ul>
@@ -132,7 +151,7 @@ export default function DataDeletionPage() {
   return (
     <LegalDocument
       title="데이터 삭제 요청"
-      summary="Google 접근 권한 철회, GrowdoAds에 보관된 정보의 삭제, 광고 중지는 각각 별도의 절차입니다."
+      summary="Google·Meta 접근 권한 철회, GrowdoAds에 보관된 정보의 삭제, 광고 중지는 각각 별도의 절차입니다."
       sections={sections}
       related={{ href: "/privacy", label: "개인정보처리방침" }}
     />

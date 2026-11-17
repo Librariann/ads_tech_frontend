@@ -21,11 +21,11 @@ for (const [path, heading] of pages) {
       for (const [link] of pages)
         assert.ok(
           html.includes(`href="${link}"`),
-          `Missing public navigation to ${link}`,
+          `Missing public navigation to ${link}`
         );
       assert.match(html, /mailto:okpc0305@gmail.com/);
       assert.ok(!response.headers.has("set-cookie"));
-    },
+    }
   );
 }
 
@@ -39,19 +39,26 @@ test(
     });
     assert.equal(response.status, 200);
     assert.match(await response.text(), /href="\/privacy"/);
-  },
+  }
 );
 
-test("private dashboard is still protected", { skip: !base }, async () => {
-  const response = await fetch(new URL("/dashboard", base), {
-    redirect: "manual",
+for (const path of ["/dashboard", "/dashboard/google-ads", "/workspaces/1/campaigns", "/workspaces/1/campaigns/new"]) {
+  test(`${path} remains private`, { skip: !base }, async () => {
+    const response = await fetch(new URL(path, base), { redirect: "manual" });
+    if (path === "/workspaces/1/campaigns/new" && response.status === 200) {
+      // A streamed loading boundary redirects in HTML after response headers are sent.
+      const html = await response.text();
+      assert.match(html, /http-equiv="refresh" content="[^\"]*url=\/login"/);
+      assert.doesNotMatch(html, /id="campaign-(account|name|budget)"/);
+      return;
+    }
+    assert.ok([307, 308].includes(response.status));
+    assert.equal(
+      new URL(response.headers.get("location"), base).pathname,
+      "/login"
+    );
   });
-  assert.ok([307, 308].includes(response.status));
-  assert.equal(
-    new URL(response.headers.get("location"), base).pathname,
-    "/login",
-  );
-});
+}
 
 test(
   "sitemap and robots expose public URLs, not account pages",
@@ -65,5 +72,5 @@ test(
     const robots = await fetch(new URL("/robots.txt", base));
     assert.equal(robots.status, 200);
     assert.match(await robots.text(), /Disallow: \/api\//);
-  },
+  }
 );

@@ -11,7 +11,6 @@ import {
   Home,
   LoaderCircle,
   LockKeyhole,
-  MailPlus,
   Save,
   Send,
   Settings2,
@@ -207,8 +206,8 @@ export function WorkspaceSettings({
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#18212f] lg:flex">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-[#e9e2da] bg-[#fdfbf8] px-5 py-7 lg:flex">
+    <div className="min-h-screen bg-[#f8f9fa] text-[#18212f] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-[#e2e5e7] bg-[#ffffff] px-5 py-7 lg:flex">
         <Brand />
 
         <nav aria-label="주요 메뉴" className="mt-12 space-y-1.5">
@@ -221,14 +220,14 @@ export function WorkspaceSettings({
           />
         </nav>
 
-        <div className="mt-auto border-t border-[#e9e2da] pt-5">
+        <div className="mt-auto border-t border-[#e2e5e7] pt-5">
           <div className="flex items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#18212f] text-[#fff8f2]">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#18212f] text-[#ffffff]">
               <Building2 aria-hidden="true" className="size-4" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold">{workspace.name}</p>
-              <p className="mt-0.5 text-xs text-[#8a8179]">
+              <p className="mt-0.5 text-xs text-[#737b82]">
                 {roleLabels[workspace.role]}
               </p>
             </div>
@@ -238,7 +237,7 @@ export function WorkspaceSettings({
       </aside>
 
       <main className="min-w-0 flex-1 pb-23 lg:ml-[248px] lg:pb-0">
-        <header className="border-b border-[#e9e2da] bg-[#fdfbf8] px-5 sm:px-8 lg:hidden">
+        <header className="border-b border-[#e2e5e7] bg-[#ffffff] px-5 sm:px-8 lg:hidden">
           <div className="flex h-17 items-center justify-between">
             <Brand />
             <LogoutButton />
@@ -246,7 +245,7 @@ export function WorkspaceSettings({
         </header>
 
         <div className="mx-auto max-w-[1040px] px-5 py-8 sm:px-8 sm:py-11 lg:px-12 lg:py-13">
-          <div className="dashboard-reveal">
+          <div>
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#747b75] hover:text-[#18212f] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#f26b3a]"
@@ -257,29 +256,26 @@ export function WorkspaceSettings({
             <div className="mt-7 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-[2rem] font-extrabold leading-tight tracking-[-0.04em] sm:text-[2.35rem]">
+                  <h1 className="text-2xl font-semibold leading-tight">
                     워크스페이스 설정
                   </h1>
-                  <span className="rounded-full bg-[#e7f4ed] px-2.5 py-1 text-xs font-bold text-[#176a4b]">
-                    {roleLabels[workspace.role]}
-                  </span>
                 </div>
                 <p className="mt-3 text-[0.95rem] leading-7 text-[#707873]">
-                  광고 결과의 기준이 되는 기본 정보를 관리합니다.
+                  {workspace.name}
                 </p>
               </div>
-              <p className="text-xs text-[#8a8179]">
+              <p className="text-xs text-[#737b82]">
                 마지막 변경 {formatDate(workspace.updatedAt)}
               </p>
             </div>
           </div>
 
-          <div className="dashboard-reveal dashboard-delay-1 mt-10 grid gap-10 lg:grid-cols-[180px_minmax(0,1fr)] lg:gap-13">
+          <div className="mt-8">
             <nav
               aria-label="설정 메뉴"
-              className="space-y-1 self-start lg:sticky lg:top-8"
+              className="mb-8 flex flex-wrap gap-x-2 gap-y-1 border-b border-[#e2e5e7] pb-3"
             >
-              <SettingsAnchor href="#general" icon={Building2} active>
+              <SettingsAnchor href="#general" icon={Building2}>
                 기본 정보
               </SettingsAnchor>
               {members ? (
@@ -292,7 +288,7 @@ export function WorkspaceSettings({
               </SettingsAnchor>
               {canEdit && (
                 <SettingsAnchor href="#advertising" icon={Settings2}>
-                  광고계정 등록
+                  광고계정
                 </SettingsAnchor>
               )}
             </nav>
@@ -301,12 +297,9 @@ export function WorkspaceSettings({
               <section id="general" className="scroll-mt-8">
                 <div className="flex items-start justify-between gap-5">
                   <div>
-                    <h2 className="text-xl font-extrabold tracking-[-0.025em]">
+                    <h2 className="text-base font-semibold">
                       기본 정보
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#737973]">
-                      리포트와 광고비 표시에 공통으로 적용됩니다.
-                    </p>
                   </div>
                   {!canEdit ? (
                     <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold text-[#787f7a]">
@@ -318,12 +311,11 @@ export function WorkspaceSettings({
 
                 <form
                   onSubmit={handleSubmit}
-                  className="mt-7 border-t border-[#ddd6ce]"
+                  className="mt-7 border-t border-[#e2e5e7]"
                 >
                   <FormRow
                     htmlFor="workspace-name"
                     label="워크스페이스 이름"
-                    description="메뉴와 리포트에 표시되는 이름"
                   >
                     <input
                       id="workspace-name"
@@ -337,7 +329,7 @@ export function WorkspaceSettings({
                       disabled={!canEdit}
                       required
                       maxLength={120}
-                      className="h-11 w-full rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3.5 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12 disabled:bg-[#f2eee8] disabled:text-[#77716b]"
+                      className="h-11 w-full rounded-lg border border-[#d5dadd] bg-[#ffffff] px-3.5 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12 disabled:bg-[#eef0f2] disabled:text-[#737b82]"
                     />
                   </FormRow>
 
@@ -408,7 +400,7 @@ export function WorkspaceSettings({
                       <button
                         type="submit"
                         disabled={!isDirty || isSaving}
-                        className="inline-flex h-11 min-w-31 items-center justify-center gap-2 rounded-lg bg-[#18212f] px-4 text-sm font-bold text-[#fff8f2] transition-colors hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#f26b3a] disabled:cursor-not-allowed disabled:bg-[#d7d0c8] disabled:text-[#8d857d]"
+                        className="inline-flex h-11 min-w-31 items-center justify-center gap-2 rounded-lg bg-[#18212f] px-4 text-sm font-bold text-[#ffffff] transition-colors hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#f26b3a] disabled:cursor-not-allowed disabled:bg-[#e2e5e7] disabled:text-[#737b82]"
                       >
                         {isSaving ? (
                           <LoaderCircle
@@ -422,7 +414,7 @@ export function WorkspaceSettings({
                       </button>
                     </div>
                   ) : (
-                    <div className="mt-7 flex items-start gap-2.5 border-t border-[#e5ded6] pt-5 text-sm leading-6 text-[#737973]">
+                    <div className="mt-7 flex items-start gap-2.5 border-t border-[#e2e5e7] pt-5 text-sm leading-6 text-[#737973]">
                       <BadgeCheck
                         aria-hidden="true"
                         className="mt-0.5 size-4 shrink-0 text-[#218a62]"
@@ -436,16 +428,13 @@ export function WorkspaceSettings({
               {members ? (
                 <section
                   id="members"
-                  className="mt-15 scroll-mt-8 border-t border-[#d9d1c8] pt-10"
+                  className="mt-10 scroll-mt-8 border-t border-[#d5dadd] pt-7"
                 >
                   <div className="flex items-end justify-between gap-5">
                     <div>
-                      <h2 className="text-xl font-extrabold tracking-[-0.025em]">
+                      <h2 className="text-base font-semibold">
                         멤버
                       </h2>
-                      <p className="mt-2 text-sm leading-6 text-[#737973]">
-                        이 워크스페이스에 접근할 수 있는 사용자입니다.
-                      </p>
                     </div>
                     <span className="text-sm font-bold text-[#596372]">
                       {members.length}명
@@ -454,16 +443,9 @@ export function WorkspaceSettings({
 
                   <form
                     onSubmit={handleInvite}
-                    className="mt-7 border-y border-[#e1d9d1] py-5"
+                    className="mt-5"
                   >
-                    <div className="flex items-center gap-2 text-sm font-extrabold">
-                      <MailPlus
-                        aria-hidden="true"
-                        className="size-4 text-[#c04b24]"
-                      />
-                      새 멤버 초대
-                    </div>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px_auto]">
+                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px_auto]">
                       <div>
                         <label htmlFor="invite-email" className="sr-only">
                           초대할 이메일
@@ -478,7 +460,7 @@ export function WorkspaceSettings({
                           placeholder="가입된 사용자의 이메일"
                           required
                           autoComplete="email"
-                          className="h-11 w-full rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3.5 text-sm font-semibold outline-none transition placeholder:font-normal placeholder:text-[#aaa29a] focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12"
+                          className="h-11 w-full rounded-lg border border-[#d5dadd] bg-[#ffffff] px-3.5 text-sm font-semibold outline-none transition placeholder:font-normal placeholder:text-[#737b82] focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12"
                         />
                       </div>
                       <div className="relative">
@@ -496,7 +478,7 @@ export function WorkspaceSettings({
                               >,
                             )
                           }
-                          className="h-11 w-full appearance-none rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3.5 pr-9 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12"
+                          className="h-11 w-full appearance-none rounded-lg border border-[#d5dadd] bg-[#ffffff] px-3.5 pr-9 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12"
                         >
                           <option value="admin">관리자</option>
                           <option value="marketer">마케터</option>
@@ -504,13 +486,13 @@ export function WorkspaceSettings({
                         </select>
                         <ChevronDown
                           aria-hidden="true"
-                          className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#79726b]"
+                          className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#737b82]"
                         />
                       </div>
                       <button
                         type="submit"
                         disabled={isInviting || !inviteEmail.trim()}
-                        className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#18212f] px-4 text-sm font-bold text-[#fff8f2] transition-colors hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a] disabled:cursor-not-allowed disabled:bg-[#d7d0c8] disabled:text-[#8d857d]"
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#18212f] px-4 text-sm font-bold text-[#ffffff] transition-colors hover:bg-[#2a3545] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a] disabled:cursor-not-allowed disabled:bg-[#e2e5e7] disabled:text-[#737b82]"
                       >
                         {isInviting ? (
                           <LoaderCircle
@@ -523,8 +505,8 @@ export function WorkspaceSettings({
                         {isInviting ? "보내는 중" : "초대"}
                       </button>
                     </div>
-                    <p className="mt-2 text-xs leading-5 text-[#89827b]">
-                      현재는 GrowdoAds에 가입된 사용자에게 알림으로 전달됩니다.
+                    <p className="mt-2 text-xs leading-5 text-[#737b82]">
+                      가입된 계정으로 초대 알림을 보냅니다.
                     </p>
                     {inviteMessage ? (
                       <p
@@ -542,35 +524,29 @@ export function WorkspaceSettings({
                     ) : null}
                   </form>
 
-                  <div className="mt-6 overflow-hidden rounded-xl border border-[#e1d9d1] bg-[#fffdf9]">
+                  <div className="mt-5 border-y border-[#e2e5e7]">
                     {members.map((member, index) => (
                       <div
                         key={member.id}
-                        className={`flex items-center gap-3.5 px-4 py-4 sm:px-5 ${
-                          index ? "border-t border-[#eee7df]" : ""
+                        className={`flex flex-wrap items-center gap-x-4 gap-y-2 py-4 ${
+                          index ? "border-t border-[#e9ecef]" : ""
                         }`}
                       >
-                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#18212f] text-sm font-bold text-[#fff8f2]">
-                          {(member.displayName || member.email)
-                            .trim()
-                            .charAt(0)
-                            .toUpperCase()}
-                        </span>
-                        <span className="min-w-0 flex-1">
+                        <span className="min-w-0 basis-full sm:flex-1 sm:basis-auto">
                           <span className="block truncate text-sm font-bold">
                             {member.displayName || member.email}
                           </span>
                           {member.displayName ? (
-                            <span className="mt-0.5 block truncate text-xs text-[#89827b]">
+                            <span className="mt-0.5 block truncate text-xs text-[#737b82]">
                               {member.email}
                             </span>
                           ) : null}
                         </span>
-                        <span className="hidden text-xs font-semibold text-[#686f69] sm:block">
+                        <span className="text-xs text-[#686f69]">
                           {roleLabels[member.role]}
                         </span>
                         <span
-                          className={`rounded-full px-2.5 py-1 text-[0.68rem] font-bold ${getMemberStatusStyle(
+                          className={`text-xs ${getMemberStatusStyle(
                             member.status,
                           )}`}
                         >
@@ -590,12 +566,12 @@ export function WorkspaceSettings({
               {canEdit && (
                 <section
                   id="advertising"
-                  className="mt-10 scroll-mt-8 border-t border-[#e9e2da] pt-8"
+                  className="mt-10 flex scroll-mt-8 flex-wrap items-center justify-between gap-4 border-t border-[#d5dadd] pt-7"
                 >
-                  <h2 className="text-xl font-extrabold">광고계정 등록</h2>
+                  <h2 className="text-base font-semibold">광고계정</h2>
                   <Link
                     href={`/workspaces/${workspace.id}/advertising`}
-                    className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md bg-[#176a4b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#12563d]"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[#d5dadd] px-4 py-2 text-sm font-medium hover:bg-[#eef0f2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a]"
                   >
                     광고계정 등록하기
                     <ArrowRight className="size-4" aria-hidden="true" />
@@ -609,7 +585,7 @@ export function WorkspaceSettings({
 
       <nav
         aria-label="모바일 주요 메뉴"
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 border-t border-[#e7ded5] bg-[#fffdf9]/95 px-3 pb-[max(0.45rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 border-t border-[#e2e5e7] bg-[#ffffff] px-3 pb-[max(0.45rem,env(safe-area-inset-bottom))] pt-2 lg:hidden"
       >
         <MobileLink href="/" icon={Home} label="홈" />
         <MobileLink
@@ -635,9 +611,9 @@ function Brand() {
         className="relative flex size-7 items-center justify-center"
       >
         <span className="absolute size-6 rotate-45 rounded-[7px] bg-[#f26b3a]" />
-        <span className="relative size-2 rounded-full bg-[#fff8f2]" />
+        <span className="relative size-2 rounded-full bg-[#ffffff]" />
       </span>
-      <span className="text-[1.2rem] font-black tracking-[-0.04em]">
+      <span className="text-[1.2rem] font-bold">
         Growdo<span className="text-[#f26b3a]">Ads</span>
       </span>
     </Link>
@@ -659,10 +635,10 @@ function SidebarLink({
     <Link
       href={href}
       aria-current={current ? "page" : undefined}
-      className={`flex min-h-11 items-center gap-3 rounded-xl px-3.5 text-[0.94rem] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a] ${
+      className={`flex min-h-11 items-center gap-3 rounded-md px-3.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f26b3a] ${
         current
           ? "bg-[#feeae2] text-[#b43c18]"
-          : "text-[#657080] hover:bg-[#f4efe9] hover:text-[#18212f]"
+          : "text-[#657080] hover:bg-[#eef0f2] hover:text-[#18212f]"
       }`}
     >
       <Icon aria-hidden="true" className="size-[19px]" />
@@ -674,22 +650,16 @@ function SidebarLink({
 function SettingsAnchor({
   href,
   icon: Icon,
-  active = false,
   children,
 }: {
   href: string;
   icon: typeof Home;
-  active?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <a
       href={href}
-      className={`flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-[#f26b3a] ${
-        active
-          ? "bg-[#eee9e3] text-[#18212f]"
-          : "text-[#747b75] hover:bg-[#f2ede7] hover:text-[#18212f]"
-      }`}
+      className="flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-medium text-[#58615b] hover:bg-[#eef0f2] focus-visible:outline-2 focus-visible:outline-[#f26b3a]"
     >
       <Icon aria-hidden="true" className="size-4" />
       {children}
@@ -705,16 +675,16 @@ function FormRow({
 }: {
   htmlFor: string;
   label: string;
-  description: string;
+  description?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid gap-4 border-b border-[#e5ded6] py-6 sm:grid-cols-[minmax(170px,0.75fr)_minmax(240px,1fr)] sm:items-center sm:gap-8">
+    <div className="grid gap-3 border-b border-[#e2e5e7] py-5 sm:grid-cols-[minmax(170px,0.75fr)_minmax(0,1fr)] sm:items-center sm:gap-8">
       <div>
         <label htmlFor={htmlFor} className="text-sm font-bold">
           {label}
         </label>
-        <p className="mt-1 text-xs leading-5 text-[#878079]">{description}</p>
+        {description ? <p className="mt-1 text-xs leading-5 text-[#737973]">{description}</p> : null}
       </div>
       {children}
     </div>
@@ -741,7 +711,7 @@ function SelectField({
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
-        className="h-11 w-full appearance-none rounded-lg border border-[#d9d1c8] bg-[#fffdf9] px-3.5 pr-10 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12 disabled:bg-[#f2eee8] disabled:text-[#77716b]"
+        className="h-11 w-full appearance-none rounded-lg border border-[#d5dadd] bg-[#ffffff] px-3.5 pr-10 text-sm font-semibold outline-none transition focus:border-[#f26b3a] focus:ring-3 focus:ring-[#f26b3a]/12 disabled:bg-[#eef0f2] disabled:text-[#737b82]"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -751,7 +721,7 @@ function SelectField({
       </select>
       <ChevronDown
         aria-hidden="true"
-        className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#79726b]"
+        className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#737b82]"
       />
     </div>
   );
@@ -773,7 +743,7 @@ function MobileLink({
       href={href}
       aria-current={current ? "page" : undefined}
       className={`flex min-h-13 flex-col items-center justify-center gap-1 rounded-lg text-[0.68rem] font-bold focus-visible:outline-2 focus-visible:outline-[#f26b3a] ${
-        current ? "text-[#c04b24]" : "text-[#7f7a75]"
+        current ? "text-[#c04b24]" : "text-[#737b82]"
       }`}
     >
       <Icon aria-hidden="true" className="size-5" />
@@ -790,9 +760,9 @@ function formatDate(value: string) {
 }
 
 function getMemberStatusStyle(status: WorkspaceMemberStatus) {
-  if (status === "active") return "bg-[#e7f4ed] text-[#176a4b]";
-  if (status === "invited") return "bg-[#fff0d8] text-[#99550b]";
-  return "bg-[#ede9e5] text-[#706a64]";
+  if (status === "active") return "text-[#176a4b]";
+  if (status === "invited") return "text-[#99550b]";
+  return "text-[#706a64]";
 }
 
 function getInviteError(
