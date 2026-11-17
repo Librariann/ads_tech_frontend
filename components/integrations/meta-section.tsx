@@ -10,8 +10,8 @@ import {
 } from "@/lib/integrations/meta";
 
 type Snapshot = { configuration: MetaConfiguration; connections: MetaConnection[]; accounts: MetaAccount[] };
-const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#b8c4bd] px-4 text-sm font-semibold text-[#176a4b] disabled:cursor-not-allowed disabled:opacity-50";
-const fieldClass = "mt-2 min-h-11 w-full min-w-0 rounded-md border border-[#b8c4bd] bg-white px-3 text-sm";
+const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#d5dadd] px-4 text-sm font-semibold text-[#176a4b] disabled:cursor-not-allowed disabled:opacity-50";
+const fieldClass = "mt-2 min-h-11 w-full min-w-0 rounded-md border border-[#d5dadd] bg-white px-3 text-sm";
 const errorText = (error: unknown) => error instanceof MetaApiError ? error.message : "Meta 정보를 불러오지 못했습니다. 다시 시도해 주세요.";
 
 export function MetaSection({ workspaceId, role, callback, initialConnectionId }: {
@@ -102,10 +102,13 @@ export function MetaSection({ workspaceId, role, callback, initialConnectionId }
     finally { if (!signal?.aborted) setBusy(null); }
   }
 
-  return <section id="meta" aria-label="Meta 계정 연결" aria-busy={loading || !!busy} className="border-y border-[#dce3dd] py-6">
+  return <section id="meta" aria-label="Meta 계정 연결" aria-busy={loading || !!busy}>
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-lg font-bold">Meta</h2>
-      <Link href={setupHref} className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#176a4b]">Meta 성과 보기 <ArrowRight className="size-4" aria-hidden="true" /></Link>
+      <h2 className="text-base font-semibold">연결 관리</h2>
+      <div className="flex items-center gap-3">
+        <Link href={setupHref} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-[#657168]">Meta 성과 보기 <ArrowRight className="size-4" aria-hidden="true" /></Link>
+        {canManage && <button type="button" title="상태 다시 확인" aria-label="상태 다시 확인" onClick={() => { setActionError(""); setRefresh((v) => v + 1); }} disabled={loading || !!busy} className={actionClass}><RefreshCw className="size-4" aria-hidden="true" /></button>}
+      </div>
     </div>
     {callback === "connection_failed" && <p role="alert" className="mt-4 text-sm leading-6 text-[#a23628]">Meta 인증을 완료하지 못했습니다. 아래 연결 상태를 확인하고 다시 시도해 주세요.</p>}
     {callback === "connected" && <p role="status" className="mt-4 text-sm leading-6 text-[#176a4b]">Meta 인증을 완료했습니다. 사용할 광고계정을 선택해 등록해 주세요.</p>}
@@ -114,8 +117,8 @@ export function MetaSection({ workspaceId, role, callback, initialConnectionId }
       {result?.key === key && result.error && <p role="alert" className="mt-4 text-sm text-[#a23628]">{result.error}</p>}
       {data && !data.configuration.configured && <div className="py-5">
         <h3 className="font-bold">Meta 연결 설정이 아직 준비되지 않았습니다</h3>
-        <p className="mt-2 text-sm leading-6 text-[#657168]">서비스 관리자에게 Meta 앱과 토큰 암호화 설정 완료를 요청해 주세요. Google Ads 연결은 그대로 이용할 수 있습니다.</p>
-        {safeMetaMissingNames(data.configuration.missing).length > 0 && <p className="mt-3 break-words text-xs leading-6 text-[#657168]">미설정 항목: {safeMetaMissingNames(data.configuration.missing).join(", ")}</p>}
+        <p className="mt-2 text-sm leading-6 text-[#657168]">서비스 관리자에게 Meta 연결 설정을 요청해 주세요.</p>
+        {safeMetaMissingNames(data.configuration.missing).length > 0 && <details className="mt-3 text-xs leading-6 text-[#657168]"><summary className="cursor-pointer">설정 상세</summary><p className="mt-2 break-words">미설정 항목: {safeMetaMissingNames(data.configuration.missing).join(", ")}</p></details>}
       </div>}
       {data?.configuration.configured && <>
         <div className="flex flex-wrap items-center justify-between gap-4 py-5">
@@ -129,7 +132,7 @@ export function MetaSection({ workspaceId, role, callback, initialConnectionId }
           </select>
           <span className="mt-2 block text-xs font-normal text-[#657168]">인증 만료: {formatMetaTime(connection?.tokenExpiresAt ?? null)} (한국 시간)</span>
         </label>}
-        {connection && !needsAuth && <div className="mt-5 border-t border-[#dce3dd] py-5">
+        {connection && !needsAuth && <div className="mt-5 border-t border-[#e2e5e7] py-5">
           <h3 className="font-bold">광고계정 등록</h3>
           {!availableResult && <p role="status" className="mt-3 text-sm">접근 가능한 Meta 광고계정을 불러오고 있습니다.</p>}
           {availableResult?.error && <p role="alert" className="mt-3 text-sm text-[#a23628]">{availableResult.error}</p>}
@@ -144,13 +147,12 @@ export function MetaSection({ workspaceId, role, callback, initialConnectionId }
             <button type="button" className={`${actionClass} mt-4`} onClick={register} disabled={!selected || !!busy}>{busy === "register" && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}선택 계정 등록</button>
           </>}
         </div>}
-        <div className="mt-5 border-t border-[#dce3dd] py-5"><h3 className="font-bold">등록된 광고계정</h3>
-          {data.accounts.length ? <ul className="mt-3 divide-y divide-[#dce3dd]">{data.accounts.map((a) => <li key={a.id} className="py-3"><p className="break-words text-sm font-semibold">{a.name || a.externalAccountId}</p><p className="mt-1 break-words text-xs text-[#657168]">{a.externalAccountId} · {a.currency} · {a.timezone} · {a.status === "active" ? "등록됨" : "상태 확인 필요"}</p></li>)}</ul> : <p className="mt-3 text-sm text-[#657168]">등록된 Meta 광고계정이 없습니다.</p>}
+        <div className="mt-5 border-t border-[#e2e5e7] py-5"><h3 className="font-bold">등록된 광고계정</h3>
+          {data.accounts.length ? <ul className="mt-3 divide-y divide-[#e2e5e7]">{data.accounts.map((a) => <li key={a.id} className="py-3"><p className="break-words text-sm font-semibold">{a.name || a.externalAccountId}</p><p className="mt-1 break-words text-xs text-[#657168]">{a.externalAccountId} · {a.currency} · {a.timezone} · {a.status === "active" ? "등록됨" : "상태 확인 필요"}</p></li>)}</ul> : <p className="mt-3 text-sm text-[#657168]">등록된 Meta 광고계정이 없습니다.</p>}
         </div>
       </>}
       {actionError && <p role="alert" className="my-4 text-sm text-[#a23628]">{actionError}</p>}
       {notice && <p role="status" className="my-4 text-sm text-[#176a4b]">{notice}</p>}
-      <button type="button" onClick={() => { setActionError(""); setRefresh((v) => v + 1); }} disabled={loading || !!busy} className={`${actionClass} mt-4`}><RefreshCw className="size-4" aria-hidden="true" />상태 다시 확인</button>
     </>}
   </section>;
 }
